@@ -3,7 +3,7 @@ name: verify
 description: Run this project's pre-done checks (Biome format + lint, tsc typecheck, Jest tests) and report failures. Use before declaring any task done, before committing, or when the user says "verify", "check my changes", or "run the checks".
 ---
 
-Run the checks AGENTS.md requires before a task is done, from the repo root. Run all of them even if one fails, then report.
+Run these checks before a task is done, from the repo root. Run all of them even if one fails, then report.
 
 1. **Format + lint** on changed/untracked files (so pre-existing issues in stock template files aren't flagged):
    ```bash

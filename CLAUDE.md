@@ -4,6 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Hard rules
 
+- Expo SDK 58 / RN 0.88 may postdate your training — check `https://docs.expo.dev/versions/v58.0.0/` (or `https://docs.expo.dev/llms.txt`) before using an Expo or RN API.
 - Never run `npm run reset-project` — it moves/deletes `src/` and demo assets.
 - Jest config (`package.json` → `jest`) has workarounds — keep them when editing: Reanimated's resolver + `jest-setup.ts` (`setUpTests()`), `.css` → `jest/style-mock.js`, and an explicit `^@/assets/` mapper because jest-expo's generated `@/*` mapper otherwise swallows asset paths.
 - Tabs are platform-split: `src/components/app-tabs.tsx` (`expo-router/native-tabs`) and `app-tabs.web.tsx` (`expo-router/ui`). A new tab must be added to both.
