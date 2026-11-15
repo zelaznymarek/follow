@@ -42,6 +42,7 @@ A household shopper arrives at the store with a list written in arbitrary order,
 | ID   | Change ID              | Outcome (user can …)                                                                 | Prerequisites | PRD refs                                                   | Status   |
 | ---- | ---------------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------------------------------------------------- | -------- |
 | F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | ready    |
+| F-02 | play-internal-testing  | (foundation) app ships to the household through the Play internal-testing track      | F-01, Google Play verification cleared | NFR: platforms                    | proposed |
 | S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | proposed |
 | S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | proposed |
 | S-03 | store-and-zones        | name the store, define its zones and reorder them                                    | S-01          | FR-006, FR-007, FR-008                                     | proposed |
@@ -61,6 +62,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | B      | Store route              | `S-03` → `S-08`                                | Joins Stream A at `S-01` (needs sign-in); feeds `S-04`; `S-08` also needs `S-04`.                 |
 | C      | Route-ordered view       | `S-06`                                         | Branches from Stream A at `S-04`; runs alongside `S-05`; delivers the primary success criterion.  |
 | D      | Product memory           | `S-07`                                         | Branches from Stream A at `S-04`; eases the mandatory-zone friction on later lists.               |
+| E      | Store release            | `F-02`                                         | Branches from Stream A at `F-01`; runs whenever Play verification clears — expected around `S-03`; no slice waits on it. |
 
 ## Baseline
 
@@ -71,23 +73,36 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Backend / API:** absent by design — no own API tier; per `tech-stack.md` a managed backend (Supabase) serves the app directly, not yet added.
 - **Data:** absent — no backend client, schema or migrations; no on-device storage.
 - **Auth:** absent — per `tech-stack.md` the managed backend's auth will be used; nothing wired.
-- **Deploy / infra:** absent — no build/submit config, no Android package id, no backend project link, no CI; `context/deployment/deploy-plan.md` is written but paused at Phase 0 (accounts not yet created).
+- **Deploy / infra:** absent — no build/submit config, no Android package id, no backend project link, no CI; `context/deployment/deploy-plan.md` is written; Expo and Supabase accounts exist, Google Play Console account awaits identity verification (updated 2026-11-15).
 - **Observability:** absent — no logging or error tracking (Jest + Biome provide local verification only).
 
 ## Foundations
 
 ### F-01: First Android deployment with the backend project linked
 
-- **Outcome:** (foundation) the app installs on a physical Android phone from a preview build, over-the-air updates reach it, and the backend project exists and is linked to the repo with its connection settings in the build environment.
+- **Outcome:** (foundation) the app installs on a physical Android phone from a preview build, over-the-air updates reach it, and the backend project exists and is linked to the repo with its connection settings in the build environment (deploy plan Phases 1–3).
 - **Change ID:** first-android-deploy
 - **PRD refs:** NFR: platforms (Android 14+ in M-01; iOS parked), FR-001 (accounts need a backend project), NFR: offline read/mark (needs a real-device verification path)
 - **Unlocks:** S-01 (sign-in needs the backend project); verification path for S-05 — marking with no connection is tested on the household Pixel 5 (Android 14) in airplane mode; every later slice reaches the phone through preview builds or over-the-air updates.
 - **Prerequisites:** —
 - **Parallel with:** —
-- **Blockers:** Expo, Google Play Console and Supabase accounts not yet created (deploy plan Phase 0 — user); Google Play identity verification can take days, but gates only the internal-testing release, not the preview install.
+- **Blockers:** — (Expo and Supabase accounts exist; Google Play is not needed here — see F-02)
 - **Unknowns:** —
-- **Risk:** Sequenced first because the north star can only be proven on a real phone without signal, and account verification runs on someone else's clock; the plan already exists in `context/deployment/deploy-plan.md`, so this is execution, not design.
+- **Risk:** Sequenced first because the north star can only be proven on a real phone without signal; the plan already exists in `context/deployment/deploy-plan.md`, so this is execution, not design. The Play release was split out into F-02 so waiting for Play verification does not hold up the slices.
 - **Status:** ready
+
+### F-02: Release to the Play internal-testing track
+
+- **Outcome:** (foundation) a production build reaches the Google Play internal-testing track and the household installs and updates the app from Play instead of a sideloaded preview build (deploy plan Phase 4).
+- **Change ID:** play-internal-testing
+- **PRD refs:** NFR: platforms (Android 14+ in M-01)
+- **Unlocks:** verification path for S-05 — the final in-store check of offline marking runs on the build installed the way the household will actually use it.
+- **Prerequisites:** F-01, Google Play verification cleared
+- **Parallel with:** S-01, S-02, S-03, S-04, S-05, S-06, S-07, S-08
+- **Blockers:** Google Play Console identity verification (pending since 2026-11-15; can take days); the store listing also needs a privacy-policy URL and the Data safety form (infrastructure.md).
+- **Unknowns:** —
+- **Risk:** Split out of F-01 so the external wait runs in the background — expected to land around S-03, but no slice depends on it; the application id becomes permanent on first upload, so it must match F-01's.
+- **Status:** proposed
 
 ## Slices
 
@@ -194,7 +209,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 | Roadmap ID | Change ID             | Suggested issue title                                         | Ready for `/10x-plan` | Notes |
 | ---------- | --------------------- | ------------------------------------------------------------- | --------------------- | ----- |
-| F-01       | first-android-deploy  | First Android deployment with backend project linked          | yes                   | Run `/10x-plan first-android-deploy`; reuse `context/deployment/deploy-plan.md`. Accounts (Phase 0) are on the user. |
+| F-01       | first-android-deploy  | First Android deployment with backend project linked          | yes                   | Run `/10x-plan first-android-deploy`; reuse Phases 1–3 of `context/deployment/deploy-plan.md`. |
+| F-02       | play-internal-testing | Release Follow to the Play internal-testing track             | no                    | Waits on F-01 and Google Play verification |
 | S-01       | account-sign-in       | User can register and sign in                                 | no                    | Waits on F-01 |
 | S-02       | shopping-lists        | User can create, see, reopen and delete shopping lists        | no                    | Waits on S-01 |
 | S-03       | store-and-zones       | User can name the store and order its zones                   | no                    | Waits on S-01 |
@@ -222,7 +238,7 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 - **Multiple stores and per-store assignment overrides** — Why parked: PRD §Non-Goals and Success Criteria (explicitly v2); see Open Roadmap Questions 1–2.
 - **Full offline mode (creating lists, zones or stores without connectivity)** — Why parked: PRD §Non-Goals; only marking works offline (S-05).
 - **Indicator that marks are waiting to be sent** — Why parked: PRD §Non-Goals; the in-store view stays clean.
-- **Privacy or compliance commitment** — Why parked: PRD §Non-Goals; the stores' privacy-policy URL requirement is handled inside F-01's Play release step.
+- **Privacy or compliance commitment** — Why parked: PRD §Non-Goals; the stores' privacy-policy URL requirement is handled inside F-02.
 - **Auto-collapsing visited zones** — Why parked: offered and declined in FR-015.
 - **Carrying unavailable (red) items onto the next list** — Why parked: offered and declined in FR-019.
 - **Drag-and-drop zone reordering** — Why parked: shape-notes fix up/down controls for v1.

@@ -1,6 +1,6 @@
 # First deployment — Android via EAS + Supabase project
 
-> **Status (2026-11-15): PAUSED — not executed.** Nothing has been run or changed in the repo. Waiting on the user to create Expo, Google Play Console and Supabase accounts (Phase 0). Resume at Phase 0 step 4 (`nvm use`, logins) once accounts exist, then continue with Phase 1. The uncommitted `context/foundation/infrastructure.md` is still on branch `chore/project-tooling`.
+> **Status (2026-11-15): READY TO RESUME — not executed.** Expo and Supabase accounts exist; the Google Play Console account awaits identity verification. Resume at Phase 0 step 3 (create the Supabase project in Frankfurt, if not done) and step 4 (`nvm use`, logins), then run Phases 1–3 (roadmap F-01 `first-android-deploy`). Phase 4 waits for Play verification and is tracked separately as roadmap F-02 `play-internal-testing`. The uncommitted `context/foundation/infrastructure.md` is still on branch `chore/project-tooling`.
 
 ## Context
 
