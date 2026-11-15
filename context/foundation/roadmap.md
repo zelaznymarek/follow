@@ -41,7 +41,7 @@ A household shopper arrives at the store with a list written in arbitrary order,
 
 | ID   | Change ID              | Outcome (user can …)                                                                 | Prerequisites | PRD refs                                                   | Status   |
 | ---- | ---------------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------------------------------------------------- | -------- |
-| F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | ready    |
+| F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | planning |
 | F-02 | play-internal-testing  | (foundation) app ships to the household through the Play internal-testing track      | F-01, Google Play verification cleared | NFR: platforms                    | proposed |
 | S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | proposed |
 | S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | proposed |
@@ -89,7 +89,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** — (Expo and Supabase accounts exist; Google Play is not needed here — see F-02)
 - **Unknowns:** —
 - **Risk:** Sequenced first because the north star can only be proven on a real phone without signal; the plan already exists in `context/deployment/deploy-plan.md`, so this is execution, not design. The Play release was split out into F-02 so waiting for Play verification does not hold up the slices.
-- **Status:** ready
+- **Status:** planning
 
 ### F-02: Release to the Play internal-testing track
 
@@ -221,6 +221,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-08       | new-device-restore    | User finds store, zones and products on a new device          | no                    | Waits on S-03, S-04 |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Include one row for every `F-NN` and `S-NN`. It should be compact enough to copy into issues, but it must not duplicate the detailed roadmap body.
+
+**Tracked in Linear** — project Follow (P-MAR-1), milestone "M-01: First single-pass shop" (synced 2026-11-15): F-01 → MAR-5, F-02 → MAR-6, S-01 → MAR-7, S-02 → MAR-8, S-03 → MAR-9, S-04 → MAR-10, S-05 → MAR-11, S-06 → MAR-12, S-07 → MAR-13, S-08 → MAR-14. Prerequisites are mirrored as "blocked by" relations; this file stays the source of truth for sequencing.
 
 ## Open Roadmap Questions
 
