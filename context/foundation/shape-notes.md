@@ -58,7 +58,7 @@ checkpoint:
     - topic: "visibility of pending marks"
       decision: "none - sending is silent and retries on reconnect; recorded as a non-goal"
     - topic: "supported devices and OS versions"
-      decision: "iOS and Android, current major version of each plus the one before"
+      decision: "iOS: current major version plus the one before; Android: 14+ (revised 2026-11-15 - household Pixel 5 tops out at Android 14)"
   frs_drafted: 23
   quality_check_status: accepted
 product_type: mobile
@@ -400,8 +400,9 @@ which is right on average and wrong for any particular store.
   Marks made without a connection reach the user's account once connectivity returns.
 - Time from tapping a list to seeing its sorted, grouped contents is under one second in the
   typical case.
-- The app runs on iOS and Android, supporting the current major version of each and the one
-  before it.
+- The app runs on iOS, supporting the current major version and the one before it, and on
+  Android 14 or later (Android 14 covers a household Pixel 5; revised
+  2026-11-15).
 - No item added to a list is ever absent from the list view, whatever its zone, its position
   in the sort, or its mark state.
 - Privacy: no commitment. The user was offered a binary commitment that list contents never
@@ -467,8 +468,8 @@ ships only part of it:
 
 No stack content was volunteered or asked for in this session, by design. For the downstream
 stack-selection step, the product-level constraints captured here that bear on it are: a mobile
-app is the target surface, running on iOS and Android at the current major version of each
-plus the one before; an open list must stay readable and markable without connectivity, with
+app is the target surface, running on iOS at the current major version plus the one before
+and on Android 14 or later; an open list must stay readable and markable without connectivity, with
 marks kept on the device and reconciled later even if the app is closed in between, and with
 no pending-state indicator shown; signing in on a new device must restore the store, its
 zones, the route order and the remembered product assignments, but not the lists; swipe
@@ -484,9 +485,10 @@ reordering uses up/down controls rather than drag-and-drop in v1.
 2. **What happens when a store's route does not contain a product's zone?** — Owner: user.
    Unresolved for the multi-store case. v1 sidesteps it: FR-024 appends any new zone to the end
    of the single store's route, so the case cannot arise. Blocking for v2.
-3. **Which devices and OS versions must the mobile app support?** — RESOLVED on 2026-11-10:
-   iOS and Android, the current major version of each plus the one before it. Captured as a
-   non-functional requirement. Raised originally because it constrains the stack-selection step.
+3. **Which devices and OS versions must the mobile app support?** — RESOLVED on 2026-11-10,
+   revised 2026-11-15: iOS at the current major version plus the one before it; Android 14 or
+   later (Android 14 covers a household Pixel 5, whose last available version it
+   is). Captured as a non-functional requirement. Raised originally because it constrains the stack-selection step.
 4. **How does a second person join a household, and what happens when both edit a list at
    once?** — Owner: user. Deferred to v2 along with sharing. The Phase 2 decisions (per-person
    accounts, flat roles, household-owned zones and assignments) are recorded but unexercised in

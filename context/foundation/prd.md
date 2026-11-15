@@ -223,8 +223,9 @@ the MVP (see `## Non-Goals`).
   Marks made while there is no connection reach the user's account once connectivity returns.
 - Time from tapping a list to seeing its sorted, grouped contents is under one second in the
   typical case.
-- The product runs on iOS and Android, on the current major version of each and the one before
-  it.
+- The product runs on iOS at the current major version and the one before it, and on Android 14
+  or later. The Android floor is 14 because a household phone (Pixel 5) cannot upgrade past it. Revised 2026-11-15; previously "current major version of each and the one
+  before it" on both platforms.
 - No item added to a list is ever absent from the list view, whatever its zone, its position in
   the sort, or its mark state.
 - Privacy: no commitment. The user was offered a binary commitment that list contents never
@@ -344,9 +345,11 @@ decisions on paper only until the sharing work lands — see Open Question 4.
 2. **What happens when a store's route does not contain a product's zone?** — Owner: user.
    Unresolved for the multi-store case. The MVP sidesteps it: FR-024 appends any new zone to
    the end of the single store's route, so the case cannot arise. Blocking for multi-store.
-3. **Which devices and OS versions must the mobile app support?** — RESOLVED 2026-11-10: iOS
-   and Android, the current major version of each plus the one before. Now carried as a
-   non-functional requirement. Raised originally because it constrains the step that follows.
+3. **Which devices and OS versions must the mobile app support?** — RESOLVED 2026-11-10, revised
+   2026-11-15: iOS at the current major version plus the one before; Android 14 or later
+   (Android 14 covers a household Pixel 5, whose last available version it is). Now
+   carried as a non-functional requirement. Raised originally because it constrains the step
+   that follows.
 4. **How does a second person join a household, and what happens when both edit a list at
    once?** — Owner: user. Deferred along with sharing. The end-state access decisions
    (per-person accounts, flat roles, household-owned zones and assignments) are recorded but
