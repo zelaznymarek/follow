@@ -300,14 +300,14 @@ None — no data exists yet. The package id `dev.zelazny.follow` and the keystor
 
 #### Automated
 
-- [ ] 1.1 `npx expo config --type public` shows name `Follow`, `android.package` `dev.zelazny.follow`, `runtimeVersion.policy` `fingerprint`, an `updates.url` and `extra.eas.projectId`
-- [ ] 1.2 `eas config --platform android --profile preview --non-interactive` resolves without errors
-- [ ] 1.3 `npx supabase --version` runs the pinned CLI from `node_modules`, and `git status` lists `supabase/config.toml` but nothing under `supabase/.temp`
-- [ ] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 1.1 `npx expo config --type public` shows name `Follow`, `android.package` `dev.zelazny.follow`, `runtimeVersion.policy` `fingerprint`, an `updates.url` and `extra.eas.projectId`
+- [x] 1.2 `eas config --platform android --profile preview --non-interactive` resolves without errors
+- [x] 1.3 `npx supabase --version` runs the pinned CLI from `node_modules`, and `git status` lists `supabase/config.toml` but nothing under `supabase/.temp`
+- [x] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
 
 #### Manual
 
-- [ ] 1.5 The starter app still starts locally with `npx expo start` (web or Expo Go)
+- [x] 1.5 The starter app still starts locally with `npx expo start` (web or Expo Go)
 
 ### Phase 2: Supabase link and EAS env
 

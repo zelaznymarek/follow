@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "follow",
+    "name": "Follow",
     "slug": "follow",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,6 +11,7 @@
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "dev.zelazny.follow",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -37,6 +38,18 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6c6fc84d-2a52-49f2-871b-99dea06c3353"
+      }
+    },
+    "owner": "zelaznym-team",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6c6fc84d-2a52-49f2-871b-99dea06c3353"
     }
   }
 }
