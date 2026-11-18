@@ -313,26 +313,26 @@ None — no data exists yet. The package id `dev.zelazny.follow` and the keystor
 
 #### Automated
 
-- [x] 2.1 `npx supabase projects list` shows the linked `follow` project in the Frankfurt (eu-central-1) region
-- [x] 2.2 `curl -s -o /dev/null -w "%{http_code}" https://<ref>.supabase.co/auth/v1/health -H "apikey: <publishable key>"` returns `200`
-- [x] 2.3 `eas env:list --environment preview` and `eas env:list --environment production` each show both `EXPO_PUBLIC_SUPABASE_*` variables
-- [x] 2.4 `git check-ignore .env.local` confirms the file is ignored, and `git status` shows no tracked file containing the key
+- [x] 2.1 `npx supabase projects list` shows the linked `follow` project in the Frankfurt (eu-central-1) region — c2ad633
+- [x] 2.2 `curl -s -o /dev/null -w "%{http_code}" https://<ref>.supabase.co/auth/v1/health -H "apikey: <publishable key>"` returns `200` — c2ad633
+- [x] 2.3 `eas env:list --environment preview` and `eas env:list --environment production` each show both `EXPO_PUBLIC_SUPABASE_*` variables — c2ad633
+- [x] 2.4 `git check-ignore .env.local` confirms the file is ignored, and `git status` shows no tracked file containing the key — c2ad633
 
 #### Manual
 
-- [x] 2.5 `npx supabase migration list --remote`, run by the user, succeeds and lists no migrations
+- [x] 2.5 `npx supabase migration list --remote`, run by the user, succeeds and lists no migrations — c2ad633
 
 ### Phase 3: Preview APK on devices and OTA
 
 #### Automated
 
-- [ ] 3.1 `eas build:view <id> --json` reports status `FINISHED` for the preview build, with channel `preview`
-- [ ] 3.2 `eas update:list --branch preview --json --non-interactive` lists the "OTA smoke test" update
-- [ ] 3.3 `context/deployment/deploy-plan.md` contains an Executed section naming the build ID, EAS project ID and Supabase project ref
+- [x] 3.1 `eas build:view <id> --json` reports status `FINISHED` for the preview build, with channel `preview`
+- [x] 3.2 `eas update:list --branch preview --json --non-interactive` lists the "OTA smoke test" update
+- [x] 3.3 `context/deployment/deploy-plan.md` contains an Executed section naming the build ID, EAS project ID and Supabase project ref
 
 #### Manual
 
-- [ ] 3.4 The starter app launches on the Pixel 5 (Android 14) in light and dark mode
-- [ ] 3.5 The starter app launches on the current-Android emulator in light and dark mode
-- [ ] 3.6 The Android keystore and its credentials are stored in a password manager
-- [ ] 3.7 After two cold restarts on the Pixel 5, the update's page on expo.dev shows the smoke update launched by the device
+- [x] 3.4 The starter app launches on the Pixel 5 (Android 14) in light and dark mode
+- [x] 3.5 The starter app launches on the current-Android emulator in light and dark mode
+- [x] 3.6 The Android keystore and its credentials are stored in a password manager
+- [x] 3.7 After two cold restarts on the Pixel 5, the update's page on expo.dev shows the smoke update launched by the device
