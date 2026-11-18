@@ -323,21 +323,21 @@ No app data exists yet. Changing hosted auth settings affects only future sign-u
 
 #### Automated
 
-- [x] 2.1 `npx jest sign-in register home-screen` passes
-- [x] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 2.1 `npx jest sign-in register home-screen` passes — c496c1d
+- [x] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — c496c1d
 
 #### Manual
 
-- [x] 2.3 Web (`npx expo start --web`): a new account registers and lands on Home; sign-in with a wrong password shows an error; reload keeps the user signed in
-- [x] 2.4 Expo Go or the emulator: register / sign-in work, and the splash stays until the right screen is shown (no sign-in flash when already signed in)
-- [x] 2.5 The new user appears in the Supabase dashboard (Authentication → Users) as confirmed
+- [x] 2.3 Web (`npx expo start --web`): a new account registers and lands on Home; sign-in with a wrong password shows an error; reload keeps the user signed in — c496c1d
+- [x] 2.4 Expo Go or the emulator: register / sign-in work, and the splash stays until the right screen is shown (no sign-in flash when already signed in) — c496c1d
+- [x] 2.5 The new user appears in the Supabase dashboard (Authentication → Users) as confirmed — c496c1d
 
 ### Phase 3: Account tab, sign-out and on-device checks
 
 #### Automated
 
-- [ ] 3.1 `npx jest account` passes
-- [ ] 3.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 3.1 `npx jest account` passes
+- [x] 3.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
 - [ ] 3.3 `eas build:view <id> --json` reports `FINISHED` with update channel `preview` for the new build
 - [ ] 3.4 `context/deployment/deploy-plan.md` names the S-01 preview build ID and the applied auth settings
 
