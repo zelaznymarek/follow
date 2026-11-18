@@ -12,6 +12,7 @@ import {
   AUTH_MESSAGES,
   type SessionContextValue,
   SessionProvider,
+  STARTUP_TIMEOUT_MS,
 } from '@/providers/session-provider';
 
 type AuthCallback = (event: AuthChangeEvent, session: Session | null) => void;
@@ -123,6 +124,35 @@ describe('<SessionProvider /> start-up', () => {
     await renderProvider();
 
     await expectSession('signed-out|none');
+  });
+
+  describe('when the server does not answer in time', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+      mockAuth.getSession.mockReturnValue(new Promise(() => {}));
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('a stored session signs the user in after the start-up timeout', async () => {
+      storage.set('follow-auth', JSON.stringify(fakeSession('slow@b.co')));
+      await renderProvider();
+      expect(screen.getByText('loading|none')).toBeOnTheScreen();
+
+      await act(async () => jest.advanceTimersByTime(STARTUP_TIMEOUT_MS));
+
+      expect(screen.getByText('signed-in|slow@b.co')).toBeOnTheScreen();
+    });
+
+    test('nothing stored signs the user out after the start-up timeout', async () => {
+      await renderProvider();
+
+      await act(async () => jest.advanceTimersByTime(STARTUP_TIMEOUT_MS));
+
+      expect(screen.getByText('signed-out|none')).toBeOnTheScreen();
+    });
   });
 
   test('unsubscribes from auth events on unmount', async () => {

@@ -6,6 +6,7 @@ import {
 } from '@supabase/supabase-js';
 import { createContext, type ReactNode, useEffect, useState } from 'react';
 
+import { VALIDATION_MESSAGES } from '@/lib/auth-validation';
 import { getSupabase, SUPABASE_STORAGE_KEY } from '@/lib/supabase';
 
 export type SessionStatus = 'loading' | 'signed-in' | 'signed-out';
@@ -34,7 +35,7 @@ function signedIn(email: string | null | undefined): AuthState {
 export const AUTH_MESSAGES = {
   invalidCredentials: 'Wrong email or password.',
   emailTaken: 'An account with this email already exists. Try signing in instead.',
-  weakPassword: 'Use at least 8 characters, including letters and digits.',
+  weakPassword: VALIDATION_MESSAGES.passwordWeak,
   network: "Can't reach the server. Check your connection and try again.",
   noSession: "Couldn't sign you in after registering. Try signing in, or use a different email.",
   unknown: 'Something went wrong. Please try again.',
@@ -93,21 +94,42 @@ function readStoredSession(): { email: string | null } | null {
   return null;
 }
 
+/** How long the splash waits for the server before trusting the stored session. */
+export const STARTUP_TIMEOUT_MS = 3000;
+
+function startupTimeout(): { promise: Promise<'timeout'>; cancel(): void } {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const promise = new Promise<'timeout'>((resolve) => {
+    timer = setTimeout(() => resolve('timeout'), STARTUP_TIMEOUT_MS);
+  });
+  return { promise, cancel: () => clearTimeout(timer) };
+}
+
 /**
  * Start-up decision. A session from `getSession()` signs the user in. When the session could not be
- * refreshed because the network is unreachable, the stored session is trusted (offline rule);
- * anything else signs the user out.
+ * refreshed because the network is unreachable or too slow, the stored session is trusted (offline
+ * rule); anything else signs the user out.
  */
 async function resolveStartupState(supabase: SupabaseClient): Promise<AuthState> {
   let error: unknown = null;
+  const limit = startupTimeout();
   try {
-    const { data, error: sessionError } = await supabase.auth.getSession();
+    // An expired access token is refreshed over the network, and auth-js retries that for up to 30 s.
+    const result = await Promise.race([supabase.auth.getSession(), limit.promise]);
+    if (result === 'timeout') {
+      // Slow or no network: trust the stored session; later auth events correct the status.
+      const stored = readStoredSession();
+      return stored ? signedIn(stored.email) : SIGNED_OUT;
+    }
+    const { data, error: sessionError } = result;
     if (data.session) {
       return signedIn(data.session.user.email);
     }
     error = sessionError;
   } catch (thrown) {
     error = thrown;
+  } finally {
+    limit.cancel();
   }
 
   if (isAuthRetryableFetchError(error)) {

@@ -309,28 +309,28 @@ No app data exists yet. Changing hosted auth settings affects only future sign-u
 
 #### Automated
 
-- [x] 1.1 `npx supabase config diff` reports no `[auth]` differences after the push
-- [x] 1.2 `npx expo config --type public` lists `expo-sqlite` in `plugins`, and `package.json` has `@supabase/supabase-js` and `expo-sqlite`
-- [x] 1.3 `npx jest session-provider` passes, including the offline-rule cases
-- [x] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 1.1 `npx supabase config diff` reports no `[auth]` differences after the push — 65d5174
+- [x] 1.2 `npx expo config --type public` lists `expo-sqlite` in `plugins`, and `package.json` has `@supabase/supabase-js` and `expo-sqlite` — 65d5174
+- [x] 1.3 `npx jest session-provider` passes, including the offline-rule cases — 65d5174
+- [x] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — 65d5174
 
 #### Manual
 
-- [x] 1.5 The user reviewed the `supabase config diff` output and ran `npx supabase config push`
-- [x] 1.6 In the Supabase dashboard (Authentication → Sign In / Providers → Email), Confirm email is off and the password policy shows minimum 8 with letters and digits
+- [x] 1.5 The user reviewed the `supabase config diff` output and ran `npx supabase config push` — 65d5174
+- [x] 1.6 In the Supabase dashboard (Authentication → Sign In / Providers → Email), Confirm email is off and the password policy shows minimum 8 with letters and digits — 65d5174
 
 ### Phase 2: Gate and sign-in / register screens
 
 #### Automated
 
-- [ ] 2.1 `npx jest sign-in register home-screen` passes
-- [ ] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 2.1 `npx jest sign-in register home-screen` passes
+- [x] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
 
 #### Manual
 
-- [ ] 2.3 Web (`npx expo start --web`): a new account registers and lands on Home; sign-in with a wrong password shows an error; reload keeps the user signed in
-- [ ] 2.4 Expo Go or the emulator: register / sign-in work, and the splash stays until the right screen is shown (no sign-in flash when already signed in)
-- [ ] 2.5 The new user appears in the Supabase dashboard (Authentication → Users) as confirmed
+- [x] 2.3 Web (`npx expo start --web`): a new account registers and lands on Home; sign-in with a wrong password shows an error; reload keeps the user signed in
+- [x] 2.4 Expo Go or the emulator: register / sign-in work, and the splash stays until the right screen is shown (no sign-in flash when already signed in)
+- [x] 2.5 The new user appears in the Supabase dashboard (Authentication → Users) as confirmed
 
 ### Phase 3: Account tab, sign-out and on-device checks
 
