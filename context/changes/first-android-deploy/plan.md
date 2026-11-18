@@ -326,13 +326,13 @@ None — no data exists yet. The package id `dev.zelazny.follow` and the keystor
 
 #### Automated
 
-- [x] 3.1 `eas build:view <id> --json` reports status `FINISHED` for the preview build, with channel `preview`
-- [x] 3.2 `eas update:list --branch preview --json --non-interactive` lists the "OTA smoke test" update
-- [x] 3.3 `context/deployment/deploy-plan.md` contains an Executed section naming the build ID, EAS project ID and Supabase project ref
+- [x] 3.1 `eas build:view <id> --json` reports status `FINISHED` for the preview build, with channel `preview` — 4513f7a
+- [x] 3.2 `eas update:list --branch preview --json --non-interactive` lists the "OTA smoke test" update — 4513f7a
+- [x] 3.3 `context/deployment/deploy-plan.md` contains an Executed section naming the build ID, EAS project ID and Supabase project ref — 4513f7a
 
 #### Manual
 
-- [x] 3.4 The starter app launches on the Pixel 5 (Android 14) in light and dark mode
-- [x] 3.5 The starter app launches on the current-Android emulator in light and dark mode
-- [x] 3.6 The Android keystore and its credentials are stored in a password manager
-- [x] 3.7 After two cold restarts on the Pixel 5, the update's page on expo.dev shows the smoke update launched by the device
+- [x] 3.4 The starter app launches on the Pixel 5 (Android 14) in light and dark mode — 4513f7a
+- [x] 3.5 The starter app launches on the current-Android emulator in light and dark mode — 4513f7a
+- [x] 3.6 The Android keystore and its credentials are stored in a password manager — 4513f7a
+- [x] 3.7 After two cold restarts on the Pixel 5, the update's page on expo.dev shows the smoke update launched by the device — 4513f7a
