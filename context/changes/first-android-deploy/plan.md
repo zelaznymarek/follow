@@ -300,39 +300,39 @@ None — no data exists yet. The package id `dev.zelazny.follow` and the keystor
 
 #### Automated
 
-- [ ] 1.1 `npx expo config --type public` shows name `Follow`, `android.package` `dev.zelazny.follow`, `runtimeVersion.policy` `fingerprint`, an `updates.url` and `extra.eas.projectId`
-- [ ] 1.2 `eas config --platform android --profile preview --non-interactive` resolves without errors
-- [ ] 1.3 `npx supabase --version` runs the pinned CLI from `node_modules`, and `git status` lists `supabase/config.toml` but nothing under `supabase/.temp`
-- [ ] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 1.1 `npx expo config --type public` shows name `Follow`, `android.package` `dev.zelazny.follow`, `runtimeVersion.policy` `fingerprint`, an `updates.url` and `extra.eas.projectId` — 3b90368
+- [x] 1.2 `eas config --platform android --profile preview --non-interactive` resolves without errors — 3b90368
+- [x] 1.3 `npx supabase --version` runs the pinned CLI from `node_modules`, and `git status` lists `supabase/config.toml` but nothing under `supabase/.temp` — 3b90368
+- [x] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — 3b90368
 
 #### Manual
 
-- [ ] 1.5 The starter app still starts locally with `npx expo start` (web or Expo Go)
+- [x] 1.5 The starter app still starts locally with `npx expo start` (web or Expo Go) — 3b90368
 
 ### Phase 2: Supabase link and EAS env
 
 #### Automated
 
-- [ ] 2.1 `npx supabase projects list` shows the linked `follow` project in the Frankfurt (eu-central-1) region
-- [ ] 2.2 `curl -s -o /dev/null -w "%{http_code}" https://<ref>.supabase.co/auth/v1/health -H "apikey: <publishable key>"` returns `200`
-- [ ] 2.3 `eas env:list --environment preview` and `eas env:list --environment production` each show both `EXPO_PUBLIC_SUPABASE_*` variables
-- [ ] 2.4 `git check-ignore .env.local` confirms the file is ignored, and `git status` shows no tracked file containing the key
+- [x] 2.1 `npx supabase projects list` shows the linked `follow` project in the Frankfurt (eu-central-1) region — c2ad633
+- [x] 2.2 `curl -s -o /dev/null -w "%{http_code}" https://<ref>.supabase.co/auth/v1/health -H "apikey: <publishable key>"` returns `200` — c2ad633
+- [x] 2.3 `eas env:list --environment preview` and `eas env:list --environment production` each show both `EXPO_PUBLIC_SUPABASE_*` variables — c2ad633
+- [x] 2.4 `git check-ignore .env.local` confirms the file is ignored, and `git status` shows no tracked file containing the key — c2ad633
 
 #### Manual
 
-- [ ] 2.5 `npx supabase migration list --remote`, run by the user, succeeds and lists no migrations
+- [x] 2.5 `npx supabase migration list --remote`, run by the user, succeeds and lists no migrations — c2ad633
 
 ### Phase 3: Preview APK on devices and OTA
 
 #### Automated
 
-- [ ] 3.1 `eas build:view <id> --json` reports status `FINISHED` for the preview build, with channel `preview`
-- [ ] 3.2 `eas update:list --branch preview --json --non-interactive` lists the "OTA smoke test" update
-- [ ] 3.3 `context/deployment/deploy-plan.md` contains an Executed section naming the build ID, EAS project ID and Supabase project ref
+- [x] 3.1 `eas build:view <id> --json` reports status `FINISHED` for the preview build, with channel `preview` — 4513f7a
+- [x] 3.2 `eas update:list --branch preview --json --non-interactive` lists the "OTA smoke test" update — 4513f7a
+- [x] 3.3 `context/deployment/deploy-plan.md` contains an Executed section naming the build ID, EAS project ID and Supabase project ref — 4513f7a
 
 #### Manual
 
-- [ ] 3.4 The starter app launches on the Pixel 5 (Android 14) in light and dark mode
-- [ ] 3.5 The starter app launches on the current-Android emulator in light and dark mode
-- [ ] 3.6 The Android keystore and its credentials are stored in a password manager
-- [ ] 3.7 After two cold restarts on the Pixel 5, the update's page on expo.dev shows the smoke update launched by the device
+- [x] 3.4 The starter app launches on the Pixel 5 (Android 14) in light and dark mode — 4513f7a
+- [x] 3.5 The starter app launches on the current-Android emulator in light and dark mode — 4513f7a
+- [x] 3.6 The Android keystore and its credentials are stored in a password manager — 4513f7a
+- [x] 3.7 After two cold restarts on the Pixel 5, the update's page on expo.dev shows the smoke update launched by the device — 4513f7a

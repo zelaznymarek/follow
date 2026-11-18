@@ -17,6 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use Node 24 LTS (`.nvmrc`). Node 23 triggers EBADENGINE warnings from Expo 58 / RN 0.88.
 - Locally, asdf sets the Node version via `.tool-versions` (nvm is not installed); keep it on the same major as `.nvmrc`.
 - `npx tsc --noEmit` needs the gitignored, generated `expo-env.d.ts` and `.expo/types/` (CSS module + typed-route types). If tsc reports missing `*.css` modules, run `npx expo start` once to generate them.
+- Supabase CLI v3: target hosted with `--remote` (never `--linked`/`--project-ref`); run `db push --remote --dry-run` and get human approval before `--yes`; `npx supabase db dump` before any remote push.
 - Biome handles both formatting and linting (`biome.json`); ESLint / `expo lint` is not used. Lint with `npm run lint`.
 - Tests: Jest (`jest-expo` preset) + React Native Testing Library 14 (`render` is async — `await` it). Tests go in root `__tests__/` named `*-test.tsx`, never in `src/app/` (every file there is a route). Run `npm test`, or one file with `npx jest <pattern>`.
 
