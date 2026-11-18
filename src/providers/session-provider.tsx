@@ -209,7 +209,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   async function signOut(): Promise<void> {
     try {
       // `local` clears this device's session without needing the network.
-      await getSupabase().auth.signOut({ scope: 'local' });
+      const { error } = await getSupabase().auth.signOut({ scope: 'local' });
+      if (error) {
+        console.warn('Sign-out did not clear the stored session:', error.message);
+      }
+    } catch (thrown) {
+      console.warn('Sign-out did not clear the stored session:', thrown);
     } finally {
       setState(SIGNED_OUT);
     }

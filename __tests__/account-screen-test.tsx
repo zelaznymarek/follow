@@ -27,4 +27,27 @@ describe('<AccountScreen />', () => {
 
     expect(mockSignOut).toHaveBeenCalledTimes(1);
   });
+
+  test('ignores a second press while sign-out is in flight', async () => {
+    mockSignOut.mockReturnValue(new Promise(() => {}));
+    await render(<AccountScreen />);
+    const user = userEvent.setup();
+    const button = screen.getByRole('button', { name: 'Sign out' });
+
+    await user.press(button);
+    await user.press(button);
+
+    expect(button).toBeDisabled();
+    expect(mockSignOut).toHaveBeenCalledTimes(1);
+  });
+
+  test('stays usable when sign-out fails', async () => {
+    mockSignOut.mockRejectedValue(new Error('storage unavailable'));
+    await render(<AccountScreen />);
+    const user = userEvent.setup();
+
+    await user.press(screen.getByRole('button', { name: 'Sign out' }));
+
+    expect(screen.getByRole('button', { name: 'Sign out' })).toBeEnabled();
+  });
 });
