@@ -147,3 +147,7 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 - `eas update` in non-interactive mode requires `--environment`; the smoke update ran with `--environment preview --platform android`.
 - `eas env:create` is deprecated in eas-cli 27.10 — use `eas env:set` next time.
 - Agent sandbox: npm needs `--cache $TMPDIR/npm-cache` (root-owned files in `~/.npm`), `expo install` needs `EXPO_OFFLINE=1`, the Supabase CLI needs `DO_NOT_TRACK=1`; `eas update` uploads to `update-assets-upload-production.storage.googleapis.com`.
+
+### 2026-11-18 — S-01 `account-sign-in`: hosted auth settings
+
+`supabase config push` (reviewed by the user) applied `supabase/config.toml` to project `skudzowkkurdbevxwnht`: `auth.site_url` `follow://`, `auth.email.enable_confirmations` `false`, `auth.minimum_password_length` `8`, `auth.password_requirements` `letters_digits`. All other sections were aligned to the hosted values first, so nothing else changed; `supabase config diff` afterwards reports no differences.

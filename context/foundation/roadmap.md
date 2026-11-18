@@ -3,7 +3,7 @@ project: Follow
 version: 1
 status: draft                    # draft | active | locked
 created: 2026-11-15
-updated: 2026-11-17
+updated: 2026-11-18
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -43,7 +43,7 @@ A household shopper arrives at the store with a list written in arbitrary order,
 | ---- | ---------------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------------------------------------------------- | -------- |
 | F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | in-progress |
 | F-02 | play-internal-testing  | (foundation) app ships to the household through the Play internal-testing track      | F-01, Google Play verification cleared | NFR: platforms                    | proposed |
-| S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | proposed |
+| S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | in-progress |
 | S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | proposed |
 | S-03 | store-and-zones        | name the store, define its zones and reorder them                                    | S-01          | FR-006, FR-007, FR-008                                     | proposed |
 | S-04 | add-product-with-zone  | add a product to a list, giving it a zone the first time; remove a product           | S-02, S-03    | US-02, FR-010, FR-011, FR-012, FR-013, FR-020, FR-024      | proposed |
@@ -116,7 +116,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Comes before any data because everything the user creates belongs to the account (PRD §Access Control) — adding accounts later would mean migrating device-only data; sign-in redirect configuration is the kind of native change that burns preview builds (infrastructure.md risk register).
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-02: Shopping lists
 
