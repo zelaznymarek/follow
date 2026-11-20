@@ -336,15 +336,15 @@ No app data exists yet. Changing hosted auth settings affects only future sign-u
 
 #### Automated
 
-- [x] 3.1 `npx jest account` passes
-- [x] 3.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
-- [x] 3.3 `eas build:view <id> --json` reports `FINISHED` with update channel `preview` for the new build
-- [x] 3.4 `context/deployment/deploy-plan.md` names the S-01 preview build ID and the applied auth settings
+- [x] 3.1 `npx jest account` passes — 841a55f
+- [x] 3.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — 841a55f
+- [x] 3.3 `eas build:view <id> --json` reports `FINISHED` with update channel `preview` for the new build — 841a55f
+- [x] 3.4 `context/deployment/deploy-plan.md` names the S-01 preview build ID and the applied auth settings — 841a55f
 
 #### Manual
 
-- [x] 3.5 Pixel 5 (Android 14), new APK: register a second test account, sign out, sign in again; light and dark mode render correctly
-- [x] 3.6 Pixel 5: force-close and reopen → still signed in, no sign-in flash
-- [x] 3.7 Pixel 5 offline rule: sign in, wait more than 1 hour without opening the app, enable airplane mode, cold-start → the app opens signed in on Home; Sign out in airplane mode returns to sign-in
-- [x] 3.8 Emulator (current Android): sign-in, Account tab and sign-out work
-- [x] 3.9 Web: Account tab shows the email; Sign out returns to sign-in
+- [x] 3.5 Pixel 5 (Android 14), new APK: register a second test account, sign out, sign in again; light and dark mode render correctly — 841a55f
+- [x] 3.6 Pixel 5: force-close and reopen → still signed in, no sign-in flash — 841a55f
+- [x] 3.7 Pixel 5 offline rule: sign in, wait more than 1 hour without opening the app, enable airplane mode, cold-start → the app opens signed in on Home; Sign out in airplane mode returns to sign-in — 841a55f
+- [x] 3.8 Emulator (current Android): sign-in, Account tab and sign-out work — 841a55f
+- [x] 3.9 Web: Account tab shows the email; Sign out returns to sign-in — 841a55f
