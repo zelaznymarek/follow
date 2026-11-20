@@ -3,7 +3,7 @@ project: Follow
 version: 1
 status: draft                    # draft | active | locked
 created: 2026-11-15
-updated: 2026-11-18
+updated: 2026-11-20
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -41,7 +41,7 @@ A household shopper arrives at the store with a list written in arbitrary order,
 
 | ID   | Change ID              | Outcome (user can …)                                                                 | Prerequisites | PRD refs                                                   | Status   |
 | ---- | ---------------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------------------------------------------------- | -------- |
-| F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | in-progress |
+| F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | done        |
 | F-02 | play-internal-testing  | (foundation) app ships to the household through the Play internal-testing track      | F-01, Google Play verification cleared | NFR: platforms                    | proposed |
 | S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | done        |
 | S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | planning |
@@ -89,7 +89,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** — (Expo and Supabase accounts exist; Google Play is not needed here — see F-02)
 - **Unknowns:** —
 - **Risk:** Sequenced first because the north star can only be proven on a real phone without signal; the plan already exists in `context/deployment/deploy-plan.md`, so this is execution, not design. The Play release was split out into F-02 so waiting for Play verification does not hold up the slices.
-- **Status:** in-progress
+- **Status:** done
 
 ### F-02: Release to the Play internal-testing track
 
@@ -254,3 +254,5 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 ## Done
 
 (Empty on first generation. `/10x-archive` appends an entry here — and flips that item's `Status` to `done` — when a change whose `Change ID` matches the item is archived.)
+
+- **F-01: (foundation) the app installs on a physical Android phone from a preview build, over-the-air updates reach it, and the backend project exists and is linked to the repo with its connection settings in the build environment (deploy plan Phases 1–3).** — Archived 2026-11-20 → `context/archive/2026-11-15-first-android-deploy/`. Lesson: —.
