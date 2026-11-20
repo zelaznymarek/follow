@@ -201,7 +201,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-05, S-06, S-07
 - **Blockers:** —
 - **Unknowns:**
-  - Does "lists are not restored" mean lists must not appear on a new device, or only that restoring them is not required? — Owner: user. Block: no.
+  - Does "lists are not restored" mean lists must not appear on a new device, or only that restoring them is not required? — Owner: user. Block: no. Resolved in S-02 (2026-11-20): lists stored in the account appear on a new device; FR-025 means restoring lists is not required.
 - **Risk:** Mostly proves nothing the user built lives only on the old phone; if S-05 lands first, its on-device copy must not become the source of truth for store, zones or remembered products.
 - **Status:** proposed
 

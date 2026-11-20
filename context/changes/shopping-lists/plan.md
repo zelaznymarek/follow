@@ -71,6 +71,8 @@ Corrections from `reviews/impl-review-phase-1.md`. The phase blocks below are ke
 - **Desired End State.** Signed-in users can select, insert, update and delete only their own rows. S-02's UI uses select, insert and delete.
 - **Phase 2 §2 amendment (`listTitle`).** A name that is empty after trimming counts as unnamed and gets the date title, because the database check accepts whitespace-only names written directly over REST. Add a test case: `'   '` gives the date title.
 - **`gen:types`.** Writes to a temporary file and moves it into place only on success, so a failed run cannot leave an empty types file.
+- **Phase 3 correction (2026-11-20): types script.** Type generation moved from the `gen:types` npm script to `scripts/gen-types.sh`. The EAS fingerprint hashes `package.json` `scripts`, so the new npm script changed the runtime to `1b822e8b…`, and the first S-02 OTA (`5a48d52a`) went out on a runtime no APK has. Without it the fingerprint is `7c659def…` again.
+- **Phase 3 correction (2026-11-20): web Account icon.** Web tabs are text-only, so the web Account trigger got no icon. The person icon is native-only (`assets/images/tabIcons/account*.png`). `external-link.tsx` was also deleted, since nothing referenced it after Phase 2.
 
 ## What We're NOT Doing
 
@@ -457,28 +459,28 @@ Add the GitHub Actions keep-alive and remove the starter leftovers. Give the Acc
 
 #### Automated
 
-- [x] 2.1 `npx jest shopping-lists list-title lists-screen new-list-screen list-screen root-layout` passes
-- [x] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 2.1 `npx jest shopping-lists list-title lists-screen new-list-screen list-screen root-layout` passes — e3f3fc6
+- [x] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — e3f3fc6
 
 #### Manual
 
-- [x] 2.3 Web: empty state → create named and unnamed lists → newest first with a date title → reopen, reload → delete with Cancel and with confirm
-- [x] 2.4 Emulator (dev server): the same flow works, the tab bar stays on all three Lists screens, and the Account tab still works
-- [x] 2.5 Supabase dashboard: created rows belong to the signed-in user, and a second test account sees none of them
+- [x] 2.3 Web: empty state → create named and unnamed lists → newest first with a date title → reopen, reload → delete with Cancel and with confirm — e3f3fc6
+- [x] 2.4 Emulator (dev server): the same flow works, the tab bar stays on all three Lists screens, and the Account tab still works — e3f3fc6
+- [x] 2.5 Supabase dashboard: created rows belong to the signed-in user, and a second test account sees none of them — e3f3fc6
 
 ### Phase 3: Keep-alive, cleanup and rollout
 
 #### Automated
 
-- [ ] 3.1 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
-- [ ] 3.2 The starter-leftover grep returns nothing, and `git diff main -- package.json` shows no dependency changes
-- [ ] 3.3 `.github/workflows/supabase-keep-alive.yml` exists with `schedule` and `workflow_dispatch` and references only the two secrets
-- [ ] 3.4 `eas update` publishes to branch `preview` with runtime `7c659defc2f12bd944574fbecaffd57cb2956734`
-- [ ] 3.5 `roadmap.md` and `deploy-plan.md` contain the S-02 decision and rollout entries
+- [x] 3.1 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 3.2 The starter-leftover grep returns nothing, and `git diff main -- package.json` shows no dependency changes
+- [x] 3.3 `.github/workflows/supabase-keep-alive.yml` exists with `schedule` and `workflow_dispatch` and references only the two secrets
+- [x] 3.4 `eas update` publishes to branch `preview` with runtime `7c659defc2f12bd944574fbecaffd57cb2956734`
+- [x] 3.5 `roadmap.md` and `deploy-plan.md` contain the S-02 decision and rollout entries
 
 #### Manual
 
-- [ ] 3.6 Pixel 5 online over OTA: create named and unnamed lists, reopen, delete with confirmation, the Account icon, light and dark mode
-- [ ] 3.7 Pixel 5 in airplane mode: still signed in, and My lists shows the offline message; Retry after reconnecting loads the lists
-- [ ] 3.8 Emulator: the lists created on the Pixel 5 appear for the same account
+- [x] 3.6 Pixel 5 online over OTA: create named and unnamed lists, reopen, delete with confirmation, the Account icon, light and dark mode
+- [x] 3.7 Pixel 5 in airplane mode: still signed in, and My lists shows the offline message; Retry after reconnecting loads the lists
+- [x] 3.8 Emulator: the lists created on the Pixel 5 appear for the same account
 - [ ] 3.9 After the merge into `main`, the user adds the two secrets and a manual workflow run is green

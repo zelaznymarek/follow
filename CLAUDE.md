@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Supabase migrations: every new table enables RLS and grants explicitly (`authenticated`; `anon` only on purpose); every new function runs `revoke execute … from public` and then grants explicitly. `public` defaults no longer grant to anon/authenticated (`supabase/migrations/20261120211932_tighten_default_privileges.sql`), but Postgres still gives `PUBLIC` execute on new functions.
 - Biome handles both formatting and linting (`biome.json`); ESLint / `expo lint` is not used. Lint with `npm run lint`.
 - Tests: Jest (`jest-expo` preset) + React Native Testing Library 14 (`render` is async — `await` it). Tests go in root `__tests__/` named `*-test.tsx`, never in `src/app/` (every file there is a route). Run `npm test`, or one file with `npx jest <pattern>`.
+- Regenerate Supabase types with `sh scripts/gen-types.sh` (writes `src/lib/database.types.ts`). Don't add npm scripts casually: `package.json` `scripts` are part of the EAS runtime fingerprint, so any change there needs a new build before OTA updates reach installed apps.
 
 ## Code conventions
 

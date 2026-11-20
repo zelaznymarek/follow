@@ -171,7 +171,7 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 | `20261120211932_tighten_default_privileges.sql` | `public` default privileges for role `postgres` no longer grant tables, sequences or functions to `anon`/`authenticated`; `authenticated` keeps only `select/insert/update/delete` on `shopping_lists`; explicit `grant all … to service_role` (Phase 1 review F1/F2) |
 | Applied by | the user: `db push --remote --dry-run` reviewed, then `--yes` (all three migrations) |
 | REST checks (publishable key) | `GET /rest/v1/shopping_lists` → `401` `permission denied for table shopping_lists`; `POST /rest/v1/rpc/ping` → `1` |
-| Generated types | `npm run gen:types` → `src/lib/database.types.ts` (excluded from Biome) |
+| Generated types | `sh scripts/gen-types.sh` → `src/lib/database.types.ts` (excluded from Biome) |
 
 #### Deviations
 
@@ -181,3 +181,12 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
   - `pg_default_acl` for `postgres` in `public`: only `postgres` and `service_role`.
   - Defaults owned by `supabase_admin` (objects created from the dashboard or by Supabase tooling) still grant to `anon`/`authenticated`. Schema changes go through migrations only (`infrastructure.md:98`).
 - **Sandbox.** `supabase db push --remote --dry-run` and `supabase migration list --remote` hang at "Initialising login role…" in the agent sandbox; the user runs them. `supabase gen types --remote` works from the sandbox.
+
+### 2026-11-20 — S-02 `shopping-lists`: OTA rollout and keep-alive
+
+| What | Value |
+| --- | --- |
+| OTA update | branch `preview`, group `240798b5-02f1-408e-b12d-280b19eacbe7`, message "S-02 shopping lists", android only, runtime `7c659defc2f12bd944574fbecaffd57cb2956734` (the S-01 APK `2e7aa089`); no new build |
+| Stray update | group `5a48d52a-eb1a-4487-ae93-3ad4101219e7` went out first on runtime `1b822e8b…`, because the `gen:types` npm script changed the fingerprint (`packageJson:scripts`). No installed build has that runtime, so nothing receives it. Type generation moved to `scripts/gen-types.sh` |
+| Keep-alive | `.github/workflows/supabase-keep-alive.yml`: `POST /rest/v1/rpc/ping` with the publishable key, cron `17 6 */2 * *` (UTC) plus `workflow_dispatch`; repo secrets `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`. Scheduled runs start once the workflow is on `main`. GitHub disables schedules in public repos after 60 days without repo activity; re-enable under Actions if that happens |
+| Devices verified (2026-11-20) | Pixel 5 over OTA: create named and unnamed lists, reopen, delete with confirmation, Account icon, light and dark mode; airplane mode keeps the session and shows the offline message, Retry loads after reconnecting. Emulator: lists created on the Pixel appear for the same account |
