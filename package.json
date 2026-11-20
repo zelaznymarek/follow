@@ -47,7 +47,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "biome lint .",
-    "gen:types": "supabase gen types typescript --remote --schema public > src/lib/database.types.ts",
+    "gen:types": "supabase gen types typescript --remote --schema public > \"${TMPDIR:-/tmp}/database.types.ts\" && mv \"${TMPDIR:-/tmp}/database.types.ts\" src/lib/database.types.ts",
     "test": "jest"
   },
   "private": true,

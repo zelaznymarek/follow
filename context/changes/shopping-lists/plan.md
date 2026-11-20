@@ -58,6 +58,20 @@ Verification: the per-phase Success Criteria. The end state is reached when ever
 - **Tab icons.** `NativeTabs.Trigger.Icon` accepts `sf` (iOS), `drawable` (Android native resource) or `src` (image) (`node_modules/expo-router/build/native-tabs/types.d.ts:204-230`). A new `src` PNG ships over OTA; a `drawable` would need a native build.
 - **OTA safety.** Removing a native dependency (e.g. `expo-device`) changes the runtime fingerprint and would force a new APK. S-02 keeps `package.json` dependencies unchanged so it can ship over OTA.
 
+### Review addendum (Phase 1 review, 2026-11-20)
+
+Corrections from `reviews/impl-review-phase-1.md`. The phase blocks below are kept as written.
+
+- **Grants (supersedes "No automatic grants").** This project still applied Supabase's old default privileges, so `anon` and `authenticated` received grants on `shopping_lists` automatically. Phase 1 therefore has three migrations:
+  - `20261120204123_create_shopping_lists.sql`;
+  - `20261120205749_revoke_anon_shopping_lists.sql` (revoke `anon`);
+  - `20261120211932_tighten_default_privileges.sql`: `public` default privileges stop granting to `anon` and `authenticated`, `authenticated` keeps only DML on `shopping_lists`, and `service_role` is granted explicitly.
+  - New functions still need `revoke execute … from public` (rule added to CLAUDE.md).
+- **Phase 1 §2, as executed.** The schema backup is at `~/follow-backups/2026-11-20-pre-s02-schema.sql`, not `$TMPDIR`. The user ran the dump, the dry run, the push and `migration list --remote`, because Docker and the database login are not reachable from the agent sandbox. Only `gen types --remote` and the REST checks ran in the sandbox.
+- **Desired End State.** Signed-in users can select, insert, update and delete only their own rows. S-02's UI uses select, insert and delete.
+- **Phase 2 §2 amendment (`listTitle`).** A name that is empty after trimming counts as unnamed and gets the date title, because the database check accepts whitespace-only names written directly over REST. Add a test case: `'   '` gives the date title.
+- **`gen:types`.** Writes to a temporary file and moves it into place only on success, so a failed run cannot leave an empty types file.
+
 ## What We're NOT Doing
 
 - **Offline reads.** No device-side copy of lists; offline reading and the mark queue are designed in S-05 (`roadmap.md:167`).
@@ -428,16 +442,16 @@ Add the GitHub Actions keep-alive and remove the starter leftovers. Give the Acc
 
 #### Automated
 
-- [x] 1.1 `npx supabase migration list --remote` shows the `create_shopping_lists` migration applied remotely
-- [x] 1.2 Anonymous table access is refused: `curl` on `/rest/v1/shopping_lists?select=id` with the publishable key returns `401`
-- [x] 1.3 `curl -X POST …/rest/v1/rpc/ping` with the publishable key returns `1`
-- [x] 1.4 `src/lib/database.types.ts` contains `shopping_lists` and `ping`, and `npx tsc --noEmit` passes with the typed clients
-- [x] 1.5 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 1.1 `npx supabase migration list --remote` shows the `create_shopping_lists` migration applied remotely — 36634fa
+- [x] 1.2 Anonymous table access is refused: `curl` on `/rest/v1/shopping_lists?select=id` with the publishable key returns `401` — 36634fa
+- [x] 1.3 `curl -X POST …/rest/v1/rpc/ping` with the publishable key returns `1` — 36634fa
+- [x] 1.4 `src/lib/database.types.ts` contains `shopping_lists` and `ping`, and `npx tsc --noEmit` passes with the typed clients — 36634fa
+- [x] 1.5 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — 36634fa
 
 #### Manual
 
-- [x] 1.6 The user reviewed the `db push --remote --dry-run` output and ran `npx supabase db push --remote --yes`
-- [x] 1.7 In the Supabase dashboard (Table Editor → `shopping_lists`), RLS is shown as enabled with 4 policies
+- [x] 1.6 The user reviewed the `db push --remote --dry-run` output and ran `npx supabase db push --remote --yes` — 36634fa
+- [x] 1.7 In the Supabase dashboard (Table Editor → `shopping_lists`), RLS is shown as enabled with 4 policies — 36634fa
 
 ### Phase 2: Lists screens
 

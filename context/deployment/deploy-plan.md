@@ -168,11 +168,16 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 | Backup before the first push | `npx supabase db dump --remote` (schema) to `~/follow-backups/2026-11-20-pre-s02-schema.sql`, outside the repo, run by the user (Docker is not reachable from the agent sandbox) |
 | `20261120204123_create_shopping_lists.sql` | Table `public.shopping_lists` (`id`, `user_id` default `auth.uid()` → `auth.users` on delete cascade, `name` null or 1–80 chars, `created_at`), index `(user_id, created_at desc)`, RLS with 4 owner policies `to authenticated`, `select/insert/update/delete` granted to `authenticated`; function `public.ping()` returning 1, execute granted to `anon` and `authenticated` |
 | `20261120205749_revoke_anon_shopping_lists.sql` | `revoke all on public.shopping_lists from anon` (see deviation below) |
-| Applied by | the user: `db push --remote --dry-run` reviewed, then `--yes` (both migrations) |
+| `20261120211932_tighten_default_privileges.sql` | `public` default privileges for role `postgres` no longer grant tables, sequences or functions to `anon`/`authenticated`; `authenticated` keeps only `select/insert/update/delete` on `shopping_lists`; explicit `grant all … to service_role` (Phase 1 review F1/F2) |
+| Applied by | the user: `db push --remote --dry-run` reviewed, then `--yes` (all three migrations) |
 | REST checks (publishable key) | `GET /rest/v1/shopping_lists` → `401` `permission denied for table shopping_lists`; `POST /rest/v1/rpc/ping` → `1` |
 | Generated types | `npm run gen:types` → `src/lib/database.types.ts` (excluded from Biome) |
 
 #### Deviations
 
 - **Default privileges.** Supabase changelog 45329 says new `public` tables have received no Data API grants since 2026-10-30. This project still applied the old default privileges: `anon` received grants on `shopping_lists`, and an anonymous `GET` returned `200 []`, with RLS the only barrier. The second migration revokes them. Future tables need an explicit `revoke … from anon` (or the schema's default privileges changed) until the project's defaults match the changelog.
+- **Checked after the third migration** (SQL editor, 2026-11-20):
+  - `shopping_lists` grants: `authenticated` has DELETE, INSERT, SELECT and UPDATE; `postgres` and `service_role` have all; `anon` has none.
+  - `pg_default_acl` for `postgres` in `public`: only `postgres` and `service_role`.
+  - Defaults owned by `supabase_admin` (objects created from the dashboard or by Supabase tooling) still grant to `anon`/`authenticated`. Schema changes go through migrations only (`infrastructure.md:98`).
 - **Sandbox.** `supabase db push --remote --dry-run` and `supabase migration list --remote` hang at "Initialising login role…" in the agent sandbox; the user runs them. `supabase gen types --remote` works from the sandbox.
