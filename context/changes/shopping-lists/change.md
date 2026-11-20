@@ -1,9 +1,9 @@
 ---
 change_id: shopping-lists
 title: Shopping lists
-status: impl_reviewed
+status: implemented
 created: 2026-11-20
-updated: 2026-11-20
+updated: 2026-11-21
 archived_at: null
 ---
 

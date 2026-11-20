@@ -472,15 +472,15 @@ Add the GitHub Actions keep-alive and remove the starter leftovers. Give the Acc
 
 #### Automated
 
-- [x] 3.1 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
-- [x] 3.2 The starter-leftover grep returns nothing, and `git diff main -- package.json` shows no dependency changes
-- [x] 3.3 `.github/workflows/supabase-keep-alive.yml` exists with `schedule` and `workflow_dispatch` and references only the two secrets
-- [x] 3.4 `eas update` publishes to branch `preview` with runtime `7c659defc2f12bd944574fbecaffd57cb2956734`
-- [x] 3.5 `roadmap.md` and `deploy-plan.md` contain the S-02 decision and rollout entries
+- [x] 3.1 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — f28186b
+- [x] 3.2 The starter-leftover grep returns nothing, and `git diff main -- package.json` shows no dependency changes — f28186b
+- [x] 3.3 `.github/workflows/supabase-keep-alive.yml` exists with `schedule` and `workflow_dispatch` and references only the two secrets — f28186b
+- [x] 3.4 `eas update` publishes to branch `preview` with runtime `7c659defc2f12bd944574fbecaffd57cb2956734` — f28186b
+- [x] 3.5 `roadmap.md` and `deploy-plan.md` contain the S-02 decision and rollout entries — f28186b
 
 #### Manual
 
-- [x] 3.6 Pixel 5 online over OTA: create named and unnamed lists, reopen, delete with confirmation, the Account icon, light and dark mode
-- [x] 3.7 Pixel 5 in airplane mode: still signed in, and My lists shows the offline message; Retry after reconnecting loads the lists
-- [x] 3.8 Emulator: the lists created on the Pixel 5 appear for the same account
+- [x] 3.6 Pixel 5 online over OTA: create named and unnamed lists, reopen, delete with confirmation, the Account icon, light and dark mode — f28186b
+- [x] 3.7 Pixel 5 in airplane mode: still signed in, and My lists shows the offline message; Retry after reconnecting loads the lists — f28186b
+- [x] 3.8 Emulator: the lists created on the Pixel 5 appear for the same account — f28186b
 - [ ] 3.9 After the merge into `main`, the user adds the two secrets and a manual workflow run is green
