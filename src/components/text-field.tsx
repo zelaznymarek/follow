@@ -15,6 +15,7 @@ export type TextFieldProps = {
   keyboardType?: TextInputProps['keyboardType'];
   autoCapitalize?: TextInputProps['autoCapitalize'];
   editable?: boolean;
+  maxLength?: number;
   onSubmitEditing?: TextInputProps['onSubmitEditing'];
 };
 

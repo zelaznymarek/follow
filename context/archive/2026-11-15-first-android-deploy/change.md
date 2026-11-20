@@ -1,10 +1,10 @@
 ---
 change_id: first-android-deploy
 title: First Android deployment with the backend project linked
-status: impl_reviewed
+status: archived
 created: 2026-11-15
-updated: 2026-11-18
-archived_at: null
+updated: 2026-11-20
+archived_at: 2026-11-20T19:14:31Z
 ---
 
 ## Notes

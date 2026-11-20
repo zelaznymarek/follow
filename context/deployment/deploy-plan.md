@@ -160,3 +160,33 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 | What it adds | email/password sign-in and register, auth gate, Account tab with sign-out (supabase-js session stored under `follow-auth` via `expo-sqlite` localStorage) |
 | Runtime | new fingerprint (F-01 was `fd1fcb12…`): the F-01 APK does not receive OTA updates published for this build, so reinstall from the new build |
 | OTA updates on `preview` (2026-11-20) | `bcb80d1f` and `d0d0d5d9`: temporary sign-in diagnostics for check 3.7 (never committed); `ad51a27c`: same code as `782c809`, removes them |
+
+### 2026-11-20 — S-02 `shopping-lists`: first migrations
+
+| What | Value |
+| --- | --- |
+| Backup before the first push | `npx supabase db dump --remote` (schema) to `~/follow-backups/2026-11-20-pre-s02-schema.sql`, outside the repo, run by the user (Docker is not reachable from the agent sandbox) |
+| `20261120204123_create_shopping_lists.sql` | Table `public.shopping_lists` (`id`, `user_id` default `auth.uid()` → `auth.users` on delete cascade, `name` null or 1–80 chars, `created_at`), index `(user_id, created_at desc)`, RLS with 4 owner policies `to authenticated`, `select/insert/update/delete` granted to `authenticated`; function `public.ping()` returning 1, execute granted to `anon` and `authenticated` |
+| `20261120205749_revoke_anon_shopping_lists.sql` | `revoke all on public.shopping_lists from anon` (see deviation below) |
+| `20261120211932_tighten_default_privileges.sql` | `public` default privileges for role `postgres` no longer grant tables, sequences or functions to `anon`/`authenticated`; `authenticated` keeps only `select/insert/update/delete` on `shopping_lists`; explicit `grant all … to service_role` (Phase 1 review F1/F2) |
+| Applied by | the user: `db push --remote --dry-run` reviewed, then `--yes` (all three migrations) |
+| REST checks (publishable key) | `GET /rest/v1/shopping_lists` → `401` `permission denied for table shopping_lists`; `POST /rest/v1/rpc/ping` → `1` |
+| Generated types | `sh scripts/gen-types.sh` → `src/lib/database.types.ts` (excluded from Biome) |
+
+#### Deviations
+
+- **Default privileges.** Supabase changelog 45329 says new `public` tables have received no Data API grants since 2026-10-30. This project still applied the old default privileges: `anon` received grants on `shopping_lists`, and an anonymous `GET` returned `200 []`, with RLS the only barrier. The second migration revokes them. Future tables need an explicit `revoke … from anon` (or the schema's default privileges changed) until the project's defaults match the changelog.
+- **Checked after the third migration** (SQL editor, 2026-11-20):
+  - `shopping_lists` grants: `authenticated` has DELETE, INSERT, SELECT and UPDATE; `postgres` and `service_role` have all; `anon` has none.
+  - `pg_default_acl` for `postgres` in `public`: only `postgres` and `service_role`.
+  - Defaults owned by `supabase_admin` (objects created from the dashboard or by Supabase tooling) still grant to `anon`/`authenticated`. Schema changes go through migrations only (`infrastructure.md:98`).
+- **Sandbox.** `supabase db push --remote --dry-run` and `supabase migration list --remote` hang at "Initialising login role…" in the agent sandbox; the user runs them. `supabase gen types --remote` works from the sandbox.
+
+### 2026-11-20 — S-02 `shopping-lists`: OTA rollout and keep-alive
+
+| What | Value |
+| --- | --- |
+| OTA update | branch `preview`, group `240798b5-02f1-408e-b12d-280b19eacbe7`, message "S-02 shopping lists", android only, runtime `7c659defc2f12bd944574fbecaffd57cb2956734` (the S-01 APK `2e7aa089`); no new build |
+| Stray update | group `5a48d52a-eb1a-4487-ae93-3ad4101219e7` went out first on runtime `1b822e8b…`, because the `gen:types` npm script changed the fingerprint (`packageJson:scripts`). No installed build has that runtime, so nothing receives it. Type generation moved to `scripts/gen-types.sh` |
+| Keep-alive | `.github/workflows/supabase-keep-alive.yml`: `POST /rest/v1/rpc/ping` with the publishable key, cron `17 6 */2 * *` (UTC) plus `workflow_dispatch`; repo secrets `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`. Scheduled runs start once the workflow is on `main`. GitHub disables schedules in public repos after 60 days without repo activity; re-enable under Actions if that happens |
+| Devices verified (2026-11-20) | Pixel 5 over OTA: create named and unnamed lists, reopen, delete with confirmation, Account icon, light and dark mode; airplane mode keeps the session and shows the offline message, Retry loads after reconnecting. Emulator: lists created on the Pixel appear for the same account |

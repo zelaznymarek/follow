@@ -20,6 +20,11 @@ jest.mock('@/providers/session-provider', () => ({
   SessionProvider: ({ children }: { children: ReactNode }) => children,
 }));
 
+// My lists loads from Supabase; the gate test only needs the screen to render.
+jest.mock('@/lib/shopping-lists', () => ({
+  fetchLists: () => Promise.resolve({ ok: true, data: [] }),
+}));
+
 // The splash overlay animates the native splash away; it is not part of the gate.
 jest.mock('@/components/animated-icon', () => ({
   ...jest.requireActual('@/components/animated-icon'),
@@ -27,19 +32,19 @@ jest.mock('@/components/animated-icon', () => ({
 }));
 
 describe('root layout gate', () => {
-  test('signed out: shows sign-in, not Home', async () => {
+  test('signed out: shows sign-in, not My lists', async () => {
     mockStatus = 'signed-out';
     await renderRouter('./src/app');
 
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeOnTheScreen();
-    expect(screen.queryByText(/Welcome to/)).not.toBeOnTheScreen();
+    expect(screen.queryByText('No lists yet')).not.toBeOnTheScreen();
   });
 
-  test('signed in: shows Home, not sign-in', async () => {
+  test('signed in: lands on My lists, not sign-in', async () => {
     mockStatus = 'signed-in';
     await renderRouter('./src/app');
 
-    expect(screen.getByText(/Welcome to/)).toBeOnTheScreen();
+    expect(await screen.findByText('No lists yet')).toBeOnTheScreen();
     expect(screen.queryByRole('button', { name: 'Sign in' })).not.toBeOnTheScreen();
   });
 
@@ -47,7 +52,7 @@ describe('root layout gate', () => {
     mockStatus = 'loading';
     await renderRouter('./src/app');
 
-    expect(screen.queryByText(/Welcome to/)).not.toBeOnTheScreen();
-    expect(screen.queryByText('Home')).not.toBeOnTheScreen();
+    expect(screen.queryByText('No lists yet')).not.toBeOnTheScreen();
+    expect(screen.queryByText('Lists')).not.toBeOnTheScreen();
   });
 });

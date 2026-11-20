@@ -3,7 +3,7 @@ project: Follow
 version: 1
 status: draft                    # draft | active | locked
 created: 2026-11-15
-updated: 2026-11-18
+updated: 2026-11-20
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -41,10 +41,10 @@ A household shopper arrives at the store with a list written in arbitrary order,
 
 | ID   | Change ID              | Outcome (user can …)                                                                 | Prerequisites | PRD refs                                                   | Status   |
 | ---- | ---------------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------------------------------------------------- | -------- |
-| F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | in-progress |
+| F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | done        |
 | F-02 | play-internal-testing  | (foundation) app ships to the household through the Play internal-testing track      | F-01, Google Play verification cleared | NFR: platforms                    | proposed |
-| S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | in-progress |
-| S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | proposed |
+| S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | done        |
+| S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | in-progress |
 | S-03 | store-and-zones        | name the store, define its zones and reorder them                                    | S-01          | FR-006, FR-007, FR-008                                     | proposed |
 | S-04 | add-product-with-zone  | add a product to a list, giving it a zone the first time; remove a product           | S-02, S-03    | US-02, FR-010, FR-011, FR-012, FR-013, FR-020, FR-024      | proposed |
 | S-05 | offline-marking        | swipe to mark bought/unavailable, undo, and keep marking with no connection          | S-04          | US-03, FR-018, FR-019, FR-023, FR-026, NFR: offline        | proposed |
@@ -89,7 +89,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** — (Expo and Supabase accounts exist; Google Play is not needed here — see F-02)
 - **Unknowns:** —
 - **Risk:** Sequenced first because the north star can only be proven on a real phone without signal; the plan already exists in `context/deployment/deploy-plan.md`, so this is execution, not design. The Play release was split out into F-02 so waiting for Play verification does not hold up the slices.
-- **Status:** in-progress
+- **Status:** done
 
 ### F-02: Release to the Play internal-testing track
 
@@ -116,7 +116,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Comes before any data because everything the user creates belongs to the account (PRD §Access Control) — adding accounts later would mean migrating device-only data; sign-in redirect configuration is the kind of native change that burns preview builds (infrastructure.md risk register).
-- **Status:** in-progress
+- **Status:** done
 
 ### S-02: Shopping lists
 
@@ -128,7 +128,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** First slice that stores real data in the account; the free backend tier pauses after 7 idle days (infrastructure.md), so its keep-alive mitigation lands here rather than earlier.
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-03: Store and zones
 
@@ -201,7 +201,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-05, S-06, S-07
 - **Blockers:** —
 - **Unknowns:**
-  - Does "lists are not restored" mean lists must not appear on a new device, or only that restoring them is not required? — Owner: user. Block: no.
+  - Does "lists are not restored" mean lists must not appear on a new device, or only that restoring them is not required? — Owner: user. Block: no. Resolved in S-02 (2026-11-20): lists stored in the account appear on a new device; FR-025 means restoring lists is not required.
 - **Risk:** Mostly proves nothing the user built lives only on the old phone; if S-05 lands first, its on-device copy must not become the source of truth for store, zones or remembered products.
 - **Status:** proposed
 
@@ -254,3 +254,6 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 ## Done
 
 (Empty on first generation. `/10x-archive` appends an entry here — and flips that item's `Status` to `done` — when a change whose `Change ID` matches the item is archived.)
+
+- **F-01: (foundation) the app installs on a physical Android phone from a preview build, over-the-air updates reach it, and the backend project exists and is linked to the repo with its connection settings in the build environment (deploy plan Phases 1–3).** — Archived 2026-11-20 → `context/archive/2026-11-15-first-android-deploy/`. Lesson: —.
+- **S-01: user can register, sign in, and stay signed in on their phone.** — Archived 2026-11-20 → `context/archive/2026-11-18-account-sign-in/`. Lesson: —.

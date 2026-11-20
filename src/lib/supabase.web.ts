@@ -1,15 +1,17 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
+import type { Database } from '@/lib/database.types';
+
 /** Storage key of the persisted auth session; the session provider reads it for the offline rule. */
 export const SUPABASE_STORAGE_KEY = 'follow-auth';
 
-let client: SupabaseClient | undefined;
+let client: SupabaseClient<Database> | undefined;
 
 /**
  * Web output is server-rendered, where `window` and `localStorage` do not exist, so the client is
  * created on the first call in the browser. Call it from effects or event handlers only.
  */
-export function getSupabase(): SupabaseClient {
+export function getSupabase(): SupabaseClient<Database> {
   if (typeof window === 'undefined') {
     throw new Error('getSupabase() is browser-only; call it from an effect or an event handler.');
   }
@@ -24,7 +26,7 @@ export function getSupabase(): SupabaseClient {
       );
     }
 
-    client = createClient(url, key, {
+    client = createClient<Database>(url, key, {
       auth: {
         storage: window.localStorage,
         storageKey: SUPABASE_STORAGE_KEY,

@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!context", "!.claude", "!assets"]
+    "includes": ["**", "!context", "!.claude", "!assets", "!src/lib/database.types.ts"]
   },
   "formatter": {
     "enabled": true,
