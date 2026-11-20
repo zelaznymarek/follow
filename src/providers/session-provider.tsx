@@ -4,7 +4,7 @@ import {
   isAuthWeakPasswordError,
   type SupabaseClient,
 } from '@supabase/supabase-js';
-import { createContext, type ReactNode, useEffect, useState } from 'react';
+import { createContext, type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { VALIDATION_MESSAGES } from '@/lib/auth-validation';
 import { getSupabase, SUPABASE_STORAGE_KEY } from '@/lib/supabase';
@@ -97,10 +97,13 @@ function readStoredSession(): { email: string | null } | null {
 /** How long the splash waits for the server before trusting the stored session. */
 export const STARTUP_TIMEOUT_MS = 3000;
 
-function startupTimeout(): { promise: Promise<'timeout'>; cancel(): void } {
+/** How long Sign out waits for auth-js before showing sign-in; auth-js keeps clearing the session in the background. */
+export const SIGN_OUT_TIMEOUT_MS = 2000;
+
+function timeout(ms: number): { promise: Promise<'timeout'>; cancel(): void } {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const promise = new Promise<'timeout'>((resolve) => {
-    timer = setTimeout(() => resolve('timeout'), STARTUP_TIMEOUT_MS);
+    timer = setTimeout(() => resolve('timeout'), ms);
   });
   return { promise, cancel: () => clearTimeout(timer) };
 }
@@ -112,7 +115,7 @@ function startupTimeout(): { promise: Promise<'timeout'>; cancel(): void } {
  */
 async function resolveStartupState(supabase: SupabaseClient): Promise<AuthState> {
   let error: unknown = null;
-  const limit = startupTimeout();
+  const limit = timeout(STARTUP_TIMEOUT_MS);
   try {
     // An expired access token is refreshed over the network, and auth-js retries that for up to 30 s.
     const result = await Promise.race([supabase.auth.getSession(), limit.promise]);
@@ -145,6 +148,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // Effects never run during the server render, so web output stays `loading` there and the first
   // client render matches it.
   const [state, setState] = useState<AuthState>(LOADING);
+  // True while auth-js is still clearing a session that the UI already shows as signed out.
+  const signOutPending = useRef(false);
 
   useEffect(() => {
     const supabase = getSupabase();
@@ -158,7 +163,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         case 'SIGNED_IN':
         case 'TOKEN_REFRESHED':
         case 'USER_UPDATED':
-          if (session) {
+          // A refresh that lands while sign-out is still clearing the session must not sign the user back in.
+          if (session && !(event === 'TOKEN_REFRESHED' && signOutPending.current)) {
             eventSeen = true;
             setState(signedIn(session.user.email));
           }
@@ -206,16 +212,28 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function signOut(): Promise<void> {
+  async function clearLocalSession(): Promise<void> {
+    signOutPending.current = true;
     try {
-      // `local` clears this device's session without needing the network.
+      // `local` clears this device's session; offline, auth-js may first retry a token refresh for ~25 s.
       const { error } = await getSupabase().auth.signOut({ scope: 'local' });
       if (error) {
-        console.warn('Sign-out did not clear the stored session:', error.message);
+        // The local session is removed before auth-js reports this error.
+        console.warn('Sign-out could not revoke the session on the server:', error.message);
       }
     } catch (thrown) {
       console.warn('Sign-out did not clear the stored session:', thrown);
     } finally {
+      signOutPending.current = false;
+    }
+  }
+
+  async function signOut(): Promise<void> {
+    const limit = timeout(SIGN_OUT_TIMEOUT_MS);
+    try {
+      await Promise.race([clearLocalSession(), limit.promise]);
+    } finally {
+      limit.cancel();
       setState(SIGNED_OUT);
     }
   }

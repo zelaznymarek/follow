@@ -288,6 +288,8 @@ Replace the Explore demo with an Account tab that shows the signed-in email and 
 
 None beyond start-up: the session check reads local storage only (no network) before the splash hides, so cold start is not slowed by connectivity.
 
+> **Correction (implementation review, 2026-11-20):** the note above is wrong. Offline with an expired access token, `getSession()` retries the refresh for about 25 s. The provider therefore races it against `STARTUP_TIMEOUT_MS` (3 s) and then trusts the stored session. Sign-out uses the same race with `SIGN_OUT_TIMEOUT_MS` (2 s).
+
 ## Migration Notes
 
 No app data exists yet. Changing hosted auth settings affects only future sign-ups and password changes; any test users created before the push keep working. The new preview APK replaces the F-01 APK on the devices (same application id and keystore).

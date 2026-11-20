@@ -8,7 +8,7 @@ The native Account tab reuses `assets/images/tabIcons/explore.png` (`src/compone
 
 ## F3 — Starter dead code → S-02 `shopping-lists`
 
-Removing Explore left `src/components/ui/collapsible.tsx`, `assets/images/tutorial-web.png` and `assets/images/react-logo*.png` unreferenced. Remove them in the starter cleanup when S-02 replaces Home (re-check with a grep first; `external-link.tsx` and `web-badge.tsx` are still used).
+Removing Explore left `src/components/ui/collapsible.tsx`, `assets/images/tutorial-web.png` and `assets/images/react-logo*.png` unreferenced. Remove them in the starter cleanup when S-02 replaces Home (re-check with a grep first; `external-link.tsx` and `web-badge.tsx` are still used). The starter Home hint at `src/app/(app)/index.tsx:49` still names the old path `src/app/index.tsx`; it goes when S-02 replaces Home (full review F5).
 
 ## Check 3.7 — one unexplained offline sign-out → next auth-touching change (or F-02 testing)
 

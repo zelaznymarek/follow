@@ -12,6 +12,7 @@ import {
   AUTH_MESSAGES,
   type SessionContextValue,
   SessionProvider,
+  SIGN_OUT_TIMEOUT_MS,
   STARTUP_TIMEOUT_MS,
 } from '@/providers/session-provider';
 
@@ -183,6 +184,23 @@ describe('<SessionProvider /> auth events', () => {
     await expectSession('signed-out|none');
   });
 
+  test('an auth event that arrives before start-up resolves wins over the start-up result', async () => {
+    let resolveSession: (value: unknown) => void = () => {};
+    mockAuth.getSession.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSession = resolve;
+      })
+    );
+    await renderProvider();
+
+    await act(async () => emitAuthEvent('SIGNED_OUT', null));
+    await act(async () =>
+      resolveSession({ data: { session: fakeSession('a@b.co') }, error: null })
+    );
+
+    expect(screen.getByText('signed-out|none')).toBeOnTheScreen();
+  });
+
   test('INITIAL_SESSION with null does not override a stored-session decision', async () => {
     storage.set('follow-auth', JSON.stringify(fakeSession('offline@b.co')));
     mockAuth.getSession.mockResolvedValue({
@@ -216,6 +234,32 @@ describe('<SessionProvider /> actions', () => {
     expect(result).toEqual({ ok: false, message: AUTH_MESSAGES.invalidCredentials });
   });
 
+  test('register with an email that already exists returns the emailTaken message', async () => {
+    mockAuth.signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: new AuthApiError('User already registered', 422, 'user_already_exists'),
+    });
+    await renderProvider();
+    await expectSession('signed-out|none');
+
+    const result = await session.register('a@b.co', 'abcd1234');
+
+    expect(result).toEqual({ ok: false, message: AUTH_MESSAGES.emailTaken });
+  });
+
+  test('register that returns no session returns the noSession message', async () => {
+    mockAuth.signUp.mockResolvedValue({
+      data: { user: { id: 'user-2', email: 'a@b.co' }, session: null },
+      error: null,
+    });
+    await renderProvider();
+    await expectSession('signed-out|none');
+
+    const result = await session.register('a@b.co', 'abcd1234');
+
+    expect(result).toEqual({ ok: false, message: AUTH_MESSAGES.noSession });
+  });
+
   test('signOut clears the session with local scope', async () => {
     mockAuth.getSession.mockResolvedValue({
       data: { session: fakeSession('a@b.co') },
@@ -229,6 +273,45 @@ describe('<SessionProvider /> actions', () => {
 
     expect(mockAuth.signOut).toHaveBeenCalledWith({ scope: 'local' });
     await expectSession('signed-out|none');
+  });
+
+  describe('when auth-js is slow to clear the session (offline refresh retries)', () => {
+    beforeEach(async () => {
+      mockAuth.getSession.mockResolvedValue({
+        data: { session: fakeSession('a@b.co') },
+        error: null,
+      });
+      mockAuth.signOut.mockReturnValue(new Promise(() => {}));
+      await renderProvider();
+      await expectSession('signed-in|a@b.co');
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('signOut shows signed-out after the sign-out timeout', async () => {
+      await act(async () => {
+        const pending = session.signOut();
+        jest.advanceTimersByTime(SIGN_OUT_TIMEOUT_MS);
+        await pending;
+      });
+
+      expect(screen.getByText('signed-out|none')).toBeOnTheScreen();
+    });
+
+    test('a token refresh during the pending sign-out does not sign the user back in', async () => {
+      await act(async () => {
+        const pending = session.signOut();
+        jest.advanceTimersByTime(SIGN_OUT_TIMEOUT_MS);
+        await pending;
+      });
+
+      await act(async () => emitAuthEvent('TOKEN_REFRESHED', fakeSession('a@b.co') as Session));
+
+      expect(screen.getByText('signed-out|none')).toBeOnTheScreen();
+    });
   });
 });
 
