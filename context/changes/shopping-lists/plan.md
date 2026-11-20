@@ -428,16 +428,16 @@ Add the GitHub Actions keep-alive and remove the starter leftovers. Give the Acc
 
 #### Automated
 
-- [ ] 1.1 `npx supabase migration list --remote` shows the `create_shopping_lists` migration applied remotely
-- [ ] 1.2 Anonymous table access is refused: `curl` on `/rest/v1/shopping_lists?select=id` with the publishable key returns `401`
-- [ ] 1.3 `curl -X POST …/rest/v1/rpc/ping` with the publishable key returns `1`
-- [ ] 1.4 `src/lib/database.types.ts` contains `shopping_lists` and `ping`, and `npx tsc --noEmit` passes with the typed clients
-- [ ] 1.5 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 1.1 `npx supabase migration list --remote` shows the `create_shopping_lists` migration applied remotely
+- [x] 1.2 Anonymous table access is refused: `curl` on `/rest/v1/shopping_lists?select=id` with the publishable key returns `401`
+- [x] 1.3 `curl -X POST …/rest/v1/rpc/ping` with the publishable key returns `1`
+- [x] 1.4 `src/lib/database.types.ts` contains `shopping_lists` and `ping`, and `npx tsc --noEmit` passes with the typed clients
+- [x] 1.5 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
 
 #### Manual
 
-- [ ] 1.6 The user reviewed the `db push --remote --dry-run` output and ran `npx supabase db push --remote --yes`
-- [ ] 1.7 In the Supabase dashboard (Table Editor → `shopping_lists`), RLS is shown as enabled with 4 policies
+- [x] 1.6 The user reviewed the `db push --remote --dry-run` output and ran `npx supabase db push --remote --yes`
+- [x] 1.7 In the Supabase dashboard (Table Editor → `shopping_lists`), RLS is shown as enabled with 4 policies
 
 ### Phase 2: Lists screens
 

@@ -1,7 +1,7 @@
 ---
 change_id: shopping-lists
 title: Shopping lists
-status: planned
+status: implementing
 created: 2026-11-20
 updated: 2026-11-20
 archived_at: null

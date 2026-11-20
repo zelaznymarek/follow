@@ -21,18 +21,18 @@ S-01 left a sign-in gate around `(app)`, with the Expo starter Home and an Accou
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| List name | Optional; untitled lists show their creation date | Creating a list stays one tap, matching the "Add new list" flow, while lists stay distinguishable | Plan |
-| Completed state | Deferred to S-05 | A list with no products has nothing to complete; decide it when marking exists | Plan |
-| Ordering | Newest first (`created_at desc`, then id) | The list about to be shopped is on top, in a stable order | Plan |
-| Delete | Confirmation dialog | Prevents losing a list by a mis-tap at the cost of one tap | Plan |
-| Offline | Online reads now; device copy in S-05 | One offline design instead of two; S-05 owns which lists must be readable offline | Plan |
-| New device | Account lists appear | The account is the source of truth; FR-025 means restoring lists is not required | Plan |
-| Keep-alive | GitHub Actions cron calling `ping()` every 2 days | Free, independent of use, matches the risk register | Plan |
-| Grants | Explicit `authenticated` grants plus RLS; `anon` only on `ping()` | Since 2026-10-30, new tables get no automatic Data API grants | Research |
-| Offline signal | postgrest `status: 0` means offline | postgrest-js returns status 0 when `fetch` fails instead of throwing | Research |
-| Native changes | None; ship via OTA | Same runtime as the S-01 APK; dependency removals wait for the next build | Plan |
+| Decision        | Choice                                                            | Why (1 sentence)                                                                                  | Source   |
+|-----------------|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|----------|
+| List name       | Optional; untitled lists show their creation date                 | Creating a list stays one tap, matching the "Add new list" flow, while lists stay distinguishable | Plan     |
+| Completed state | Deferred to S-05                                                  | A list with no products has nothing to complete; decide it when marking exists                    | Plan     |
+| Ordering        | Newest first (`created_at desc`, then id)                         | The list about to be shopped is on top, in a stable order                                         | Plan     |
+| Delete          | Confirmation dialog                                               | Prevents losing a list by a mis-tap at the cost of one tap                                        | Plan     |
+| Offline         | Online reads now; device copy in S-05                             | One offline design instead of two; S-05 owns which lists must be readable offline                 | Plan     |
+| New device      | Account lists appear                                              | The account is the source of truth; FR-025 means restoring lists is not required                  | Plan     |
+| Keep-alive      | GitHub Actions cron calling `ping()` every 2 days                 | Free, independent of use, matches the risk register                                               | Plan     |
+| Grants          | Explicit `authenticated` grants plus RLS; `anon` only on `ping()` | Since 2026-10-30, new tables get no automatic Data API grants                                     | Research |
+| Offline signal  | postgrest `status: 0` means offline                               | postgrest-js returns status 0 when `fetch` fails instead of throwing                              | Research |
+| Native changes  | None; ship via OTA                                                | Same runtime as the S-01 APK; dependency removals wait for the next build                         | Plan     |
 
 ## Scope
 

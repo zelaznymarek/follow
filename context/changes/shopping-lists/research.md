@@ -9,6 +9,7 @@ tags: [research, shopping-lists, supabase, rls, expo-router, keep-alive]
 status: complete
 last_updated: 2026-11-20
 last_updated_by: Claude (Opus 5.5)
+last_updated_note: "Phase 1 found that the hosted project still auto-grants new tables to anon; see Follow-up findings."
 ---
 
 # Research: S-02 shopping-lists
@@ -222,3 +223,9 @@ Technical questions for the plan:
 - Whether to add a data library or keep plain effects.
 - Where generated types go and how they are excluded from Biome.
 - Whether `db dump --remote` needs Docker on this machine (not confirmed by the CLI help).
+
+## Follow-up findings (2026-11-20, Phase 1)
+
+- **Superseded.** The Summary bullet "since 2026-10-30, new tables in `public` on existing hosted projects get no Data API grants automatically" does not hold for project `skudzowkkurdbevxwnht`.
+- **Observed.** After `20261120204123_create_shopping_lists.sql`, an anonymous `GET /rest/v1/shopping_lists` returned `200 []` and an anonymous insert was stopped only by RLS (`42501 new row violates row-level security policy`), so `anon` had received grants.
+- **Fix.** `20261120205749_revoke_anon_shopping_lists.sql` revokes them; the same `GET` now returns `401 permission denied for table shopping_lists`. Recorded in `context/deployment/deploy-plan.md` (S-02 first migrations).

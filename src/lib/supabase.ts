@@ -3,6 +3,8 @@ import 'expo-sqlite/localStorage/install';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { AppState } from 'react-native';
 
+import type { Database } from '@/lib/database.types';
+
 /** Storage key of the persisted auth session; the session provider reads it for the offline rule. */
 export const SUPABASE_STORAGE_KEY = 'follow-auth';
 
@@ -15,7 +17,7 @@ if (!url || !key) {
   );
 }
 
-const supabase = createClient(url, key, {
+const supabase = createClient<Database>(url, key, {
   auth: {
     storage: localStorage,
     storageKey: SUPABASE_STORAGE_KEY,
@@ -34,6 +36,6 @@ AppState.addEventListener('change', (state) => {
   }
 });
 
-export function getSupabase(): SupabaseClient {
+export function getSupabase(): SupabaseClient<Database> {
   return supabase;
 }

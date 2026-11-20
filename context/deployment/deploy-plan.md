@@ -160,3 +160,19 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 | What it adds | email/password sign-in and register, auth gate, Account tab with sign-out (supabase-js session stored under `follow-auth` via `expo-sqlite` localStorage) |
 | Runtime | new fingerprint (F-01 was `fd1fcb12…`): the F-01 APK does not receive OTA updates published for this build, so reinstall from the new build |
 | OTA updates on `preview` (2026-11-20) | `bcb80d1f` and `d0d0d5d9`: temporary sign-in diagnostics for check 3.7 (never committed); `ad51a27c`: same code as `782c809`, removes them |
+
+### 2026-11-20 — S-02 `shopping-lists`: first migrations
+
+| What | Value |
+| --- | --- |
+| Backup before the first push | `npx supabase db dump --remote` (schema) to `~/follow-backups/2026-11-20-pre-s02-schema.sql`, outside the repo, run by the user (Docker is not reachable from the agent sandbox) |
+| `20261120204123_create_shopping_lists.sql` | Table `public.shopping_lists` (`id`, `user_id` default `auth.uid()` → `auth.users` on delete cascade, `name` null or 1–80 chars, `created_at`), index `(user_id, created_at desc)`, RLS with 4 owner policies `to authenticated`, `select/insert/update/delete` granted to `authenticated`; function `public.ping()` returning 1, execute granted to `anon` and `authenticated` |
+| `20261120205749_revoke_anon_shopping_lists.sql` | `revoke all on public.shopping_lists from anon` (see deviation below) |
+| Applied by | the user: `db push --remote --dry-run` reviewed, then `--yes` (both migrations) |
+| REST checks (publishable key) | `GET /rest/v1/shopping_lists` → `401` `permission denied for table shopping_lists`; `POST /rest/v1/rpc/ping` → `1` |
+| Generated types | `npm run gen:types` → `src/lib/database.types.ts` (excluded from Biome) |
+
+#### Deviations
+
+- **Default privileges.** Supabase changelog 45329 says new `public` tables have received no Data API grants since 2026-10-30. This project still applied the old default privileges: `anon` received grants on `shopping_lists`, and an anonymous `GET` returned `200 []`, with RLS the only barrier. The second migration revokes them. Future tables need an explicit `revoke … from anon` (or the schema's default privileges changed) until the project's defaults match the changelog.
+- **Sandbox.** `supabase db push --remote --dry-run` and `supabase migration list --remote` hang at "Initialising login role…" in the agent sandbox; the user runs them. `supabase gen types --remote` works from the sandbox.
