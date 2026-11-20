@@ -116,7 +116,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Comes before any data because everything the user creates belongs to the account (PRD §Access Control) — adding accounts later would mean migrating device-only data; sign-in redirect configuration is the kind of native change that burns preview builds (infrastructure.md risk register).
-- **Status:** in-progress
+- **Status:** done
 
 ### S-02: Shopping lists
 
@@ -256,3 +256,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 (Empty on first generation. `/10x-archive` appends an entry here — and flips that item's `Status` to `done` — when a change whose `Change ID` matches the item is archived.)
 
 - **F-01: (foundation) the app installs on a physical Android phone from a preview build, over-the-air updates reach it, and the backend project exists and is linked to the repo with its connection settings in the build environment (deploy plan Phases 1–3).** — Archived 2026-11-20 → `context/archive/2026-11-15-first-android-deploy/`. Lesson: —.
+- **S-01: user can register, sign in, and stay signed in on their phone.** — Archived 2026-11-20 → `context/archive/2026-11-18-account-sign-in/`. Lesson: —.

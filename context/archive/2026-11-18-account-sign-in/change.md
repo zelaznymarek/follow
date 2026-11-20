@@ -1,10 +1,10 @@
 ---
 change_id: account-sign-in
 title: Account sign in
-status: impl_reviewed
+status: archived
 created: 2026-11-18
 updated: 2026-11-20
-archived_at: null
+archived_at: 2026-11-20T19:19:27Z
 ---
 
 ## Notes
