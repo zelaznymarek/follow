@@ -457,14 +457,14 @@ Add the GitHub Actions keep-alive and remove the starter leftovers. Give the Acc
 
 #### Automated
 
-- [ ] 2.1 `npx jest shopping-lists list-title lists-screen new-list-screen list-screen root-layout` passes
-- [ ] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 2.1 `npx jest shopping-lists list-title lists-screen new-list-screen list-screen root-layout` passes
+- [x] 2.2 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
 
 #### Manual
 
-- [ ] 2.3 Web: empty state → create named and unnamed lists → newest first with a date title → reopen, reload → delete with Cancel and with confirm
-- [ ] 2.4 Emulator (dev server): the same flow works, the tab bar stays on all three Lists screens, and the Account tab still works
-- [ ] 2.5 Supabase dashboard: created rows belong to the signed-in user, and a second test account sees none of them
+- [x] 2.3 Web: empty state → create named and unnamed lists → newest first with a date title → reopen, reload → delete with Cancel and with confirm
+- [x] 2.4 Emulator (dev server): the same flow works, the tab bar stays on all three Lists screens, and the Account tab still works
+- [x] 2.5 Supabase dashboard: created rows belong to the signed-in user, and a second test account sees none of them
 
 ### Phase 3: Keep-alive, cleanup and rollout
 
