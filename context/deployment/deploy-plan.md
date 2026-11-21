@@ -191,3 +191,34 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 | Stray update | group `5a48d52a-eb1a-4487-ae93-3ad4101219e7` went out first on runtime `1b822e8b…`, because the `gen:types` npm script changed the fingerprint (`packageJson:scripts`). No installed build has that runtime, so nothing receives it. Type generation moved to `scripts/gen-types.sh` |
 | Keep-alive | `.github/workflows/supabase-keep-alive.yml`: `POST /rest/v1/rpc/ping` with the publishable key, cron `17 6 */2 * *` (UTC) plus `workflow_dispatch`; repo secrets `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`. Scheduled runs start once the workflow is on `main`. GitHub disables schedules in public repos after 60 days without repo activity; re-enable under Actions if that happens |
 | Devices verified (2026-11-20) | Pixel 5 over OTA: create named and unnamed lists, reopen, delete with confirmation, Account icon, light and dark mode; airplane mode keeps the session and shows the offline message, Retry loads after reconnecting. Emulator: lists created on the Pixel appear for the same account |
+
+### 2026-11-21 — S-03 `store-and-zones`: migrations
+
+| What | Value |
+| --- | --- |
+| Backup before the first push | schema dump to `~/follow-backups/2026-11-21-pre-s03-schema.sql`, outside the repo, run by the user |
+| `20261121120000_create_store_and_zones.sql` | Table `public.stores` (one per user via `unique (user_id)`, `name` 1–80 chars, `unique (id, user_id)` as the target for composite FKs), RLS with owner policies for select/insert/update, no delete policy or grant. Table `public.zones` (`(store_id, user_id)` → `stores` on delete cascade, `name` 1–40 chars, case-insensitive unique index `zones_store_id_name_key` on `(store_id, lower(name))`, `position` with deferrable unique `zones_store_id_position_key`), RLS with 4 owner policies. Trigger `zones_set_position` appends a new zone at the end and locks the store row. RPC `public.move_zone(uuid, text)` (security invoker) swaps a zone with its neighbour; execute granted to `authenticated` only. `shopping_lists.store_id` nullable, composite FK `on delete set null (store_id)`, filled on insert by trigger `shopping_lists_set_store`. Every new function has `revoke execute … from public`; no `anon` grants |
+| Backup before the second push | schema dump to `~/follow-backups/2026-11-21-pre-s03-review-schema.sql`, run by the user |
+| `20261121130000_harden_store_and_zones.sql` | Phase 1 review F1–F5: `authenticated` may update only `stores (name)` and `zones (name, position)`; `zones_set_position` raises `PT404` when the store is not visible; both store-row locks are `for no key update`; `move_zone` raises `PT404` (HTTP 404) for a missing zone; indexes `zones_user_id_idx` and `shopping_lists_store_id_idx`; `btrim(name) = name` checks on both name columns |
+| Applied by | the user, 2026-11-21: `db push --remote --dry-run`, then `--yes`, once per migration (dry-run output was not pasted into the session); `migration list --remote` shows both on remote |
+| REST checks (publishable key, after each push) | `GET /rest/v1/stores` and `GET /rest/v1/zones` → `401` `permission denied for table …`; `POST /rest/v1/rpc/move_zone` → `401` `permission denied for function move_zone`; `zones_set_position` not exposed (`404`); `POST /rest/v1/rpc/ping` still → `1` |
+| Grants check (SQL editor, 2026-11-21) | `authenticated` has SELECT, INSERT and UPDATE on `stores` and SELECT, INSERT, UPDATE and DELETE on `zones`; `postgres` and `service_role` have all; `anon` has none |
+| Generated types | `DO_NOT_TRACK=1 sh scripts/gen-types.sh` → `src/lib/database.types.ts` (`stores`, `zones`, `shopping_lists.store_id`, `move_zone`) |
+
+#### Deviations
+
+- **Type generation in the sandbox.** Supabase CLI 3.2.0 crashes in the agent sandbox while writing `~/.supabase/telemetry.json`; running the script with `DO_NOT_TRACK=1` avoids it. `scripts/gen-types.sh` is unchanged.
+
+### 2026-11-21 — S-03 `store-and-zones`: OTA rollout
+
+| What | Value |
+| --- | --- |
+| OTA update | branch `preview`, group `8ad377dd-1128-4961-8099-4fba38060f70`, Android update ID `01a1ff07-63f8-74fb-955e-785bd872303b`, message "S-03 store and zones", android only, runtime `7c659defc2f12bd944574fbecaffd57cb2956734` (same as S-02; a local `expo-updates fingerprint:generate --platform android` matched before publishing), commit `cac2c70`; no new build |
+| Assets | 3 new (Store tab icon) uploaded, 36 reused |
+| Checked before publishing (2026-11-21) | Phase 3 manual checks on the web dev server and the emulator: name the store, add, reorder, rename and delete zones, duplicate name refused, reload keeps the order; a new list gets `store_id` while an older list keeps `null`; a second account sees no store |
+| Devices verified (2026-11-21) | Pixel 5 over OTA: Store tab with icon, name the store, add, reorder, rename and delete zones, order kept after reopening the app, light and dark mode; airplane mode shows the offline message on the Store tab, Retry loads after reconnecting, Lists unchanged. Emulator: store, zones and order match the Pixel 5 for the same account |
+
+#### Follow-ups
+
+- **Web, offline first open.** In dev on web, opening a screen for the first time while offline fails with "Failed to fetch": expo-router (SDK 58) loads web routes on demand (`asyncRoutes`, on by default for web). Native is unaffected. Turning it off (`expo-router` plugin `asyncRoutes: { web: false }` in `app.json`) changes the runtime fingerprint, so it waits for the next native build.
+- **Add-zone keyboard (Phase 3 review F8, skipped).** Keyboard insets and Enter dropping focus on the add-zone field are unhandled; recheck on an iPhone when iOS ships.

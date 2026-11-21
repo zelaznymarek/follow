@@ -139,7 +139,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-02
 - **Blockers:** —
 - **Unknowns:**
-  - Does the user name the store explicitly before adding the first product, or is the store name asked for the first time a zone is needed? — Owner: user. Block: no.
+  - Does the user name the store explicitly before adding the first product, or is the store name asked for the first time a zone is needed? — Owner: user. Block: no. Resolved in S-03 (2026-11-21): the store is named explicitly on the Store tab; S-04 sends the user there when no store exists.
 - **Risk:** Must land before S-04 because zones created inline are appended to this store's route (FR-024); reordering uses up/down controls rather than drag-and-drop (shape-notes, Forward: tech-stack).
 - **Status:** in-progress
 

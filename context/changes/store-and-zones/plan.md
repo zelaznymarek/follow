@@ -447,13 +447,13 @@ Ship to the installed APK over OTA and record the rollout and the resolved roadm
 
 #### Automated
 
-- [ ] 4.1 `/verify` passes
-- [ ] 4.2 `git diff main -- package.json` shows no changes
-- [ ] 4.3 `eas update` publishes to branch `preview` with runtime `7c659defc2f12bd944574fbecaffd57cb2956734`
-- [ ] 4.4 `context/deployment/deploy-plan.md` and `context/foundation/roadmap.md` contain the S-03 entries
+- [x] 4.1 `/verify` passes
+- [x] 4.2 `git diff main -- package.json` shows no changes
+- [x] 4.3 `eas update` publishes to branch `preview` with runtime `7c659defc2f12bd944574fbecaffd57cb2956734`
+- [x] 4.4 `context/deployment/deploy-plan.md` and `context/foundation/roadmap.md` contain the S-03 entries
 
 #### Manual
 
-- [ ] 4.5 Pixel 5 over OTA: Store tab with icon, full flow, order kept after reopening the app, light and dark mode
-- [ ] 4.6 Pixel 5 airplane mode: Store tab offline message, Retry loads after reconnecting; Lists unchanged
-- [ ] 4.7 Emulator with the same account: store, zones and order match the Pixel 5
+- [x] 4.5 Pixel 5 over OTA: Store tab with icon, full flow, order kept after reopening the app, light and dark mode
+- [x] 4.6 Pixel 5 airplane mode: Store tab offline message, Retry loads after reconnecting; Lists unchanged
+- [x] 4.7 Emulator with the same account: store, zones and order match the Pixel 5
