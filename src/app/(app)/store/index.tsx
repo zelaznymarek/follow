@@ -363,6 +363,9 @@ function AddZoneForm({
       }
       if (result.reason === 'duplicate') {
         setNameError(ADD_ZONE_MESSAGES.duplicate);
+        // The zone may be one this screen hasn't loaded yet: an earlier add that timed out but
+        // landed, or one added on another device.
+        onAdded();
       } else {
         setFormError(ADD_ZONE_MESSAGES[result.reason]);
       }

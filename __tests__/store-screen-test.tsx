@@ -341,6 +341,26 @@ describe('<StoreScreen />', () => {
     expect(screen.getByLabelText('New zone')).toHaveDisplayValue('Frozen');
   });
 
+  test('a duplicate zone name reloads, so a zone that landed after a timeout appears', async () => {
+    await renderScreen();
+    const user = userEvent.setup();
+    await zoneNamesShown();
+
+    mockAddZone.mockResolvedValueOnce({ ok: false, reason: 'duplicate' });
+    mockFetchStore.mockResolvedValue({
+      ok: true,
+      data: { ...STORE, zones: [...STORE.zones, FROZEN] },
+    });
+    await user.press(screen.getByRole('button', { name: 'Add zone' }));
+    await user.type(screen.getByLabelText('New zone'), 'Frozen');
+    await user.press(screen.getByRole('button', { name: 'Add' }));
+
+    expect(await screen.findByText(DUPLICATE_ZONE)).toBeOnTheScreen();
+    expect(await screen.findByText('Frozen')).toBeOnTheScreen();
+    expect(screen.getByLabelText('New zone')).toHaveDisplayValue('Frozen');
+    expect(mockFetchStore).toHaveBeenCalledTimes(2);
+  });
+
   test('Cancel closes the add-zone field and drops its text and error', async () => {
     await renderScreen();
     const user = userEvent.setup();

@@ -74,13 +74,24 @@ function useZone(id: string) {
     fetchCurrent();
   }, [fetchCurrent]);
 
-  return { load, retry: fetchCurrent };
+  function markMissing() {
+    latestRequest.current += 1;
+    setLoad({ status: 'missing' });
+  }
+
+  return { load, retry: fetchCurrent, markMissing };
+}
+
+/** True only when the zone is confirmed gone; a failed check keeps the caller's own message. */
+async function zoneIsGone(id: string) {
+  const result = await fetchZone(id);
+  return result.ok && result.data === null;
 }
 
 export default function ZoneScreen() {
   const { id } = useLocalSearchParams<'/store/zones/[id]'>();
   const theme = useTheme();
-  const { load, retry } = useZone(id);
+  const { load, retry, markMissing } = useZone(id);
 
   if (load.status === 'loading') {
     return (
@@ -106,11 +117,11 @@ export default function ZoneScreen() {
     );
   }
 
-  return <ZoneForm zone={load.zone} />;
+  return <ZoneForm zone={load.zone} onMissing={markMissing} />;
 }
 
 /** Mounted once the zone has loaded, so the field starts with its current name. */
-function ZoneForm({ zone }: { zone: Zone }) {
+function ZoneForm({ zone, onMissing }: { zone: Zone; onMissing: () => void }) {
   const [name, setName] = useState(zone.name);
   const [nameError, setNameError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -143,6 +154,9 @@ function ZoneForm({ zone }: { zone: Zone }) {
       }
       if (result.reason === 'duplicate') {
         setNameError(SAVE_MESSAGES.duplicate);
+      } else if (result.reason === 'error' && (await zoneIsGone(zone.id))) {
+        // A rename that matches no row fails as an error; the zone was deleted elsewhere.
+        onMissing();
       } else {
         setSaveError(SAVE_MESSAGES[result.reason]);
       }

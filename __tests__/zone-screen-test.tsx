@@ -102,6 +102,20 @@ describe('<ZoneScreen />', () => {
     expect(router.getPathname()).toBe('/store/zones/zone-2');
   });
 
+  test('renaming a zone deleted elsewhere says it no longer exists', async () => {
+    mockRenameZone.mockResolvedValue({ ok: false, reason: 'error' });
+    await openZone();
+
+    await screen.findByLabelText('Zone name');
+    mockFetchZone.mockResolvedValue({ ok: true, data: null });
+    await userEvent.setup().press(screen.getByRole('button', { name: 'Save' }));
+
+    expect(await screen.findByText('This zone no longer exists.')).toBeOnTheScreen();
+    expect(screen.queryByText("Couldn't rename the zone. Try again.")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText('Zone name')).not.toBeOnTheScreen();
+    expect(mockFetchZone).toHaveBeenCalledTimes(2);
+  });
+
   test('an empty name is refused without a request', async () => {
     await openZone();
     const user = userEvent.setup();

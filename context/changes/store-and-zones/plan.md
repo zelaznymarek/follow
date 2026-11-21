@@ -391,6 +391,15 @@ Ship to the installed APK over OTA and record the rollout and the resolved roadm
 - **Rollback.** A follow-up migration that drops the `shopping_lists_set_store` trigger and function, the `store_id` column, `move_zone`, `zones` (with its trigger and function) and `stores`. The pre-push schema dump stays in `~/follow-backups/`.
 - **App.** The S-01/S-02 APK (runtime `7c659def…`) receives S-03 over OTA; no build.
 - **Addendum 2026-11-21 (Phase 1 review).** `20261121130000_harden_store_and_zones.sql` follows the Phase 1 migration: `authenticated` may update only `stores (name)` and `zones (name, position)`; `zones_set_position` raises `PT404` when the store is not visible; both store-row locks are `for no key update`; `move_zone` raises `PT404` (HTTP 404) for a missing zone; indexes on `zones (user_id)` and `shopping_lists (store_id)`; `btrim(name) = name` checks on both name columns. Phase 2 updates only those columns, and a zone-insert or move error for a missing zone maps to `error`. See `reviews/impl-review-phase-1.md`.
+- **Addendum 2026-11-21 (Phase 2–3 and full reviews).** Changes approved after the plan was written; the contracts above are otherwise unchanged:
+  - `request.ts`: `RequestResult<T, Extra extends 'duplicate' = never>`. `run` maps 23505 to a logged `error`; `runUnique` maps it to `duplicate` and is used only by `createStore`, `addZone` and `renameZone`. `ListsResult<T> = RequestResult<T>` (Phase 2 review F2).
+  - `useStore`: `refresh()` returns `Promise<void>` that resolves once its load settles; a failed load keeps the last store and only changes `state` (Phase 2 review F1, Phase 3 review F2).
+  - Screens: the full-screen loading/offline/error states appear only while no store has loaded; once one has, a failed reload shows an inline message with Retry above the content (Phase 3 review F2).
+  - Store screen: move buttons stay disabled until the refreshed order arrives, and a failed move refreshes too (Phase 3 review F3, F6). A `duplicate` from create store shows "Your store was already set up, so here it is." until the next action or blur (F7). The add-zone field is closed behind "Add zone" and has Add/Cancel (user feedback during the Phase 3 manual checks). A `duplicate` from add zone refreshes the store, so a zone that landed after a timeout appears (full review F1).
+  - Request failures on all three screens are assertive alerts; validation stays a polite field error (Phase 3 review F4).
+  - `name.tsx` leaves (back, or `replace('/store')`) from an effect when there is no store, not with `<Redirect>` (Phase 3 review F1).
+  - Zone screen: a rename that fails with `error` re-checks the zone and shows "This zone no longer exists." when it is gone (full review F4).
+  - Criterion 1.6's expected table-level UPDATE is superseded by the column-level grants above.
 
 ## References
 

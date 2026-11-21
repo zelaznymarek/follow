@@ -202,7 +202,7 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 | `20261121130000_harden_store_and_zones.sql` | Phase 1 review F1–F5: `authenticated` may update only `stores (name)` and `zones (name, position)`; `zones_set_position` raises `PT404` when the store is not visible; both store-row locks are `for no key update`; `move_zone` raises `PT404` (HTTP 404) for a missing zone; indexes `zones_user_id_idx` and `shopping_lists_store_id_idx`; `btrim(name) = name` checks on both name columns |
 | Applied by | the user, 2026-11-21: `db push --remote --dry-run`, then `--yes`, once per migration (dry-run output was not pasted into the session); `migration list --remote` shows both on remote |
 | REST checks (publishable key, after each push) | `GET /rest/v1/stores` and `GET /rest/v1/zones` → `401` `permission denied for table …`; `POST /rest/v1/rpc/move_zone` → `401` `permission denied for function move_zone`; `zones_set_position` not exposed (`404`); `POST /rest/v1/rpc/ping` still → `1` |
-| Grants check (SQL editor, 2026-11-21) | `authenticated` has SELECT, INSERT and UPDATE on `stores` and SELECT, INSERT, UPDATE and DELETE on `zones`; `postgres` and `service_role` have all; `anon` has none |
+| Grants check (SQL editor, 2026-11-21, after the first push) | `authenticated` has SELECT, INSERT and UPDATE on `stores` and SELECT, INSERT, UPDATE and DELETE on `zones`; `postgres` and `service_role` have all; `anon` has none. The second push then replaced the table-level UPDATE with column-level `update (name)` on `stores` and `update (name, position)` on `zones` (visible in `information_schema.column_privileges`, not re-queried) |
 | Generated types | `DO_NOT_TRACK=1 sh scripts/gen-types.sh` → `src/lib/database.types.ts` (`stores`, `zones`, `shopping_lists.store_id`, `move_zone`) |
 
 #### Deviations
@@ -221,4 +221,5 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 #### Follow-ups
 
 - **Web, offline first open.** In dev on web, opening a screen for the first time while offline fails with "Failed to fetch": expo-router (SDK 58) loads web routes on demand (`asyncRoutes`, on by default for web). Native is unaffected. Turning it off (`expo-router` plugin `asyncRoutes: { web: false }` in `app.json`) changes the runtime fingerprint, so it waits for the next native build.
+- **`shopping_lists` UPDATE grant (full review F5).** `authenticated` still has table-wide UPDATE on `shopping_lists`, so a user can PATCH `store_id` on their own lists (RLS and the composite FK allow only null or their own store). The next migration that touches `shopping_lists` (S-04/S-05) revokes it and grants UPDATE only on the columns the app writes, as the hardening migration did for `stores` and `zones`.
 - **Add-zone keyboard (Phase 3 review F8, skipped).** Keyboard insets and Enter dropping focus on the add-zone field are unhandled; recheck on an iPhone when iOS ships.
