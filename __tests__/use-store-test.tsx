@@ -95,6 +95,17 @@ describe('useStore', () => {
     expect(mockFetchStore).toHaveBeenCalledTimes(2);
   });
 
+  test('a failed refresh() reports offline and keeps the last store', async () => {
+    mockFetchStore.mockResolvedValueOnce({ ok: true, data: STORE });
+    await renderHookScreen();
+    expect(await screen.findByText('ready|Corner shop')).toBeOnTheScreen();
+
+    mockFetchStore.mockResolvedValueOnce({ ok: false, reason: 'offline' });
+    await act(async () => value.refresh());
+
+    expect(shown()).toBe('offline|Corner shop');
+  });
+
   test('reload() shows loading again', async () => {
     mockFetchStore.mockResolvedValueOnce({ ok: false, reason: 'offline' });
     await renderHookScreen();

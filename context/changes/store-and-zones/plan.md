@@ -424,9 +424,9 @@ Ship to the installed APK over OTA and record the rollout and the resolved roadm
 
 #### Automated
 
-- [x] 2.1 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
-- [x] 2.2 `npx jest request store shopping-lists` passes, including the duplicate, offline and `move_zone` cases
-- [x] 2.3 `git diff main -- package.json` shows no changes
+- [x] 2.1 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — a8829e4
+- [x] 2.2 `npx jest request store shopping-lists` passes, including the duplicate, offline and `move_zone` cases — a8829e4
+- [x] 2.3 `git diff main -- package.json` shows no changes — a8829e4
 
 ### Phase 3: Store tab and screens
 

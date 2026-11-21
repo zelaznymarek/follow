@@ -1,12 +1,12 @@
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 
 /**
- * What a data-module call reports to a screen. `duplicate` is a unique-constraint violation (Postgres
- * 23505), e.g. a zone name that already exists in the store; it is an expected outcome, not a bug.
+ * What a data-module call reports to a screen. `Extra` adds `duplicate` only for calls made with
+ * `runUnique`: a unique-constraint violation the user can cause (e.g. a zone name that already exists).
  */
-export type RequestResult<T> =
+export type RequestResult<T, Extra extends 'duplicate' = never> =
   | { ok: true; data: T }
-  | { ok: false; reason: 'offline' | 'error' | 'duplicate' };
+  | { ok: false; reason: 'offline' | 'error' | Extra };
 
 /**
  * How long a request may take before the screens show the offline message. With an expired access
@@ -18,10 +18,11 @@ export const LOAD_TIMEOUT_MS = 5000;
 
 const OFFLINE = { ok: false, reason: 'offline' } as const;
 const ERROR = { ok: false, reason: 'error' } as const;
-const DUPLICATE = { ok: false, reason: 'duplicate' } as const;
 
 /** Postgres `unique_violation`. */
 const UNIQUE_VIOLATION = '23505';
+
+type Query<T> = () => PromiseLike<PostgrestSingleResponse<T>>;
 
 function timeout(ms: number): { promise: Promise<'timeout'>; cancel(): void } {
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -31,18 +32,13 @@ function timeout(ms: number): { promise: Promise<'timeout'>; cancel(): void } {
   return { promise, cancel: () => clearTimeout(timer) };
 }
 
-/**
- * Runs one query and turns its response into a result the screens can show. postgrest-js reports a
- * failed `fetch` as `status: 0` instead of throwing, so that (or the deadline) is the offline signal;
- * a unique violation is `duplicate`; any other error, or anything thrown — including by `map` — is a
- * bug, logged under `[tag]` and reported as an error.
- */
-export async function run<T, U>(
+async function execute<T, U, Extra extends 'duplicate'>(
   tag: string,
   action: string,
-  query: () => PromiseLike<PostgrestSingleResponse<T>>,
-  map: (data: T) => U
-): Promise<RequestResult<U>> {
+  query: Query<T>,
+  map: (data: T) => U,
+  onUniqueViolation: Extra | null
+): Promise<RequestResult<U, Extra>> {
   const limit = timeout(LOAD_TIMEOUT_MS);
   try {
     const response = await Promise.race([query(), limit.promise]);
@@ -50,8 +46,8 @@ export async function run<T, U>(
       return OFFLINE;
     }
     if (response.error) {
-      if (response.error.code === UNIQUE_VIOLATION) {
-        return DUPLICATE;
+      if (onUniqueViolation !== null && response.error.code === UNIQUE_VIOLATION) {
+        return { ok: false, reason: onUniqueViolation };
       }
       console.warn(`[${tag}] ${action} failed`, response.error);
       return ERROR;
@@ -63,4 +59,32 @@ export async function run<T, U>(
   } finally {
     limit.cancel();
   }
+}
+
+/**
+ * Runs one query and turns its response into a result the screens can show. postgrest-js reports a
+ * failed `fetch` as `status: 0` instead of throwing, so that (or the deadline) is the offline signal;
+ * any error, or anything thrown — including by `map` — is a bug, logged under `[tag]` and reported as
+ * an error.
+ */
+export function run<T, U>(
+  tag: string,
+  action: string,
+  query: Query<T>,
+  map: (data: T) => U
+): Promise<RequestResult<U>> {
+  return execute<T, U, never>(tag, action, query, map, null);
+}
+
+/**
+ * `run` for a write the user can repeat into a unique constraint: a unique violation (23505) is the
+ * expected `duplicate` outcome and is not logged.
+ */
+export function runUnique<T, U>(
+  tag: string,
+  action: string,
+  query: Query<T>,
+  map: (data: T) => U
+): Promise<RequestResult<U, 'duplicate'>> {
+  return execute(tag, action, query, map, 'duplicate');
 }

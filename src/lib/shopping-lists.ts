@@ -8,11 +8,7 @@ export { LOAD_TIMEOUT_MS } from '@/lib/request';
 
 export type ShoppingList = { id: string; name: string | null; createdAt: string };
 
-/**
- * A `RequestResult` without `duplicate`: lists have no unique names, so the S-02 screens only handle
- * offline and error.
- */
-export type ListsResult<T> = { ok: true; data: T } | { ok: false; reason: 'offline' | 'error' };
+export type ListsResult<T> = RequestResult<T>;
 
 type ListRow = Pick<Tables<'shopping_lists'>, 'id' | 'name' | 'created_at'>;
 
@@ -22,21 +18,12 @@ function toShoppingList(row: ListRow): ShoppingList {
   return { id: row.id, name: row.name, createdAt: row.created_at };
 }
 
-async function runLists<T, U>(
+function runLists<T, U>(
   action: string,
   query: () => PromiseLike<PostgrestSingleResponse<T>>,
   map: (data: T) => U
 ): Promise<ListsResult<U>> {
-  const result: RequestResult<U> = await run('shopping-lists', action, query, map);
-  if (result.ok) {
-    return result;
-  }
-  if (result.reason === 'duplicate') {
-    // No list column is unique, so a unique violation here is a bug, not a user mistake.
-    console.warn(`[shopping-lists] ${action} failed`, 'unexpected unique violation');
-    return { ok: false, reason: 'error' };
-  }
-  return { ok: false, reason: result.reason };
+  return run('shopping-lists', action, query, map);
 }
 
 /** All the signed-in user's lists, newest first. */

@@ -1,7 +1,7 @@
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 
 import type { Tables } from '@/lib/database.types';
-import { type RequestResult, run } from '@/lib/request';
+import { type RequestResult, run, runUnique } from '@/lib/request';
 import { getSupabase } from '@/lib/supabase';
 
 export type Zone = { id: string; name: string; position: number };
@@ -62,8 +62,9 @@ export function fetchZone(id: string): Promise<RequestResult<Zone | null>> {
  * Creates the user's one store. `user_id` is filled by the database; a second store is refused as
  * `duplicate`.
  */
-export function createStore(name: string): Promise<RequestResult<StoreName>> {
-  return runStore(
+export function createStore(name: string): Promise<RequestResult<StoreName, 'duplicate'>> {
+  return runUnique(
+    'store',
     'createStore',
     () => getSupabase().from('stores').insert({ name: name.trim() }).select(STORE_COLUMNS).single(),
     toStoreName
@@ -89,8 +90,9 @@ export function renameStore(id: string, name: string): Promise<RequestResult<Sto
  * Appends a zone to the end of the route; the database sets `position` and `user_id`. A name that
  * matches an existing zone ignoring case is `duplicate`.
  */
-export function addZone(storeId: string, name: string): Promise<RequestResult<Zone>> {
-  return runStore(
+export function addZone(storeId: string, name: string): Promise<RequestResult<Zone, 'duplicate'>> {
+  return runUnique(
+    'store',
     'addZone',
     () =>
       getSupabase()
@@ -103,8 +105,9 @@ export function addZone(storeId: string, name: string): Promise<RequestResult<Zo
 }
 
 /** Renames a zone; a name that matches another zone ignoring case is `duplicate`. */
-export function renameZone(id: string, name: string): Promise<RequestResult<Zone>> {
-  return runStore(
+export function renameZone(id: string, name: string): Promise<RequestResult<Zone, 'duplicate'>> {
+  return runUnique(
+    'store',
     'renameZone',
     () =>
       getSupabase()

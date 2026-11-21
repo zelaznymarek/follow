@@ -1,6 +1,6 @@
 import type { PostgrestSingleResponse } from '@supabase/supabase-js';
 
-import { LOAD_TIMEOUT_MS, run } from '@/lib/request';
+import { LOAD_TIMEOUT_MS, run, runUnique } from '@/lib/request';
 
 type Response = PostgrestSingleResponse<unknown>;
 
@@ -82,16 +82,55 @@ describe('run', () => {
     expect(warn).toHaveBeenCalledTimes(1);
   });
 
-  test('a unique violation (23505) is duplicate and is not logged', async () => {
+  test('a unique violation (23505) is a logged error, because run callers cannot cause one', async () => {
     const error = {
-      message: 'duplicate key value violates unique constraint "zones_store_id_name_key"',
+      message: 'duplicate key value violates unique constraint "zones_store_id_position_key"',
       code: '23505',
     };
 
-    const result = await run('tag', 'add', answer({ data: null, error, status: 409 }), () => null);
+    const result = await run('tag', 'move', answer({ data: null, error, status: 409 }), () => null);
 
-    expect(result).toEqual({ ok: false, reason: 'duplicate' });
-    expect(warn).not.toHaveBeenCalled();
+    expect(result).toEqual({ ok: false, reason: 'error' });
+    expect(warn).toHaveBeenCalledWith('[tag] move failed', error);
+  });
+
+  describe('runUnique', () => {
+    test('a unique violation (23505) is duplicate and is not logged', async () => {
+      const error = {
+        message: 'duplicate key value violates unique constraint "zones_store_id_name_key"',
+        code: '23505',
+      };
+
+      const result = await runUnique(
+        'tag',
+        'add',
+        answer({ data: null, error, status: 409 }),
+        () => null
+      );
+
+      expect(result).toEqual({ ok: false, reason: 'duplicate' });
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    test('any other error is still a logged error', async () => {
+      const error = { message: 'permission denied for table zones', code: '42501' };
+
+      const result = await runUnique(
+        'tag',
+        'add',
+        answer({ data: null, error, status: 403 }),
+        () => null
+      );
+
+      expect(result).toEqual({ ok: false, reason: 'error' });
+      expect(warn).toHaveBeenCalledWith('[tag] add failed', error);
+    });
+
+    test('maps the data of a successful response', async () => {
+      expect(
+        await runUnique('tag', 'add', answer({ data: 2, error: null, status: 201 }), (n) => n)
+      ).toEqual({ ok: true, data: 2 });
+    });
   });
 
   describe('when the server does not answer in time', () => {

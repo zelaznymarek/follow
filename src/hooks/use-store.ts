@@ -7,7 +7,10 @@ export type StoreState = 'loading' | 'ready' | 'offline' | 'error';
 
 export type StoreValue = {
   state: StoreState;
-  /** `null` while loading, on failure, or when the user has not named a store yet. */
+  /**
+   * The last store loaded successfully: `null` until a load succeeds, or when the user has not named a
+   * store yet. It is kept during `reload()` and after a failed load, so screens decide on `state` first.
+   */
   store: Store | null;
   /** Loads again behind the spinner (Retry). */
   reload(): void;
@@ -33,8 +36,6 @@ export function useStore(): StoreValue {
     if (result.ok) {
       setStore(result.data);
       setState('ready');
-    } else if (result.reason === 'duplicate') {
-      setState('error'); // A read cannot violate a unique constraint.
     } else {
       setState(result.reason);
     }
