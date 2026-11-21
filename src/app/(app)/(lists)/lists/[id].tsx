@@ -1,12 +1,13 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { confirmDelete } from '@/lib/confirm-delete';
 import { listTitle } from '@/lib/list-title';
 import { deleteList, fetchList, type ShoppingList } from '@/lib/shopping-lists';
 
@@ -23,26 +24,7 @@ const MESSAGES = {
   deleteError: "Couldn't delete the list. Try again.",
 } as const;
 
-const CONFIRM_TITLE = 'Delete this list?';
-const CONFIRM_MESSAGE = "This can't be undone.";
-
-/** Resolves `true` only when the user confirms. `Alert.alert` buttons do not run on web. */
-function confirmDelete(): Promise<boolean> {
-  if (Platform.OS === 'web') {
-    return Promise.resolve(window.confirm(`${CONFIRM_TITLE} ${CONFIRM_MESSAGE}`));
-  }
-  return new Promise((resolve) => {
-    Alert.alert(
-      CONFIRM_TITLE,
-      CONFIRM_MESSAGE,
-      [
-        { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
-        { text: 'Delete', style: 'destructive', onPress: () => resolve(true) },
-      ],
-      { cancelable: true, onDismiss: () => resolve(false) }
-    );
-  });
-}
+const CONFIRM = { title: 'Delete this list?', message: "This can't be undone." } as const;
 
 /** Loads one list; `retry` loads it again. */
 function useList(id: string) {
@@ -84,7 +66,7 @@ export default function ListScreen() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   async function handleDelete() {
-    if (deleting || !(await confirmDelete())) {
+    if (deleting || !(await confirmDelete(CONFIRM))) {
       return;
     }
     setDeleting(true);

@@ -25,6 +25,11 @@ jest.mock('@/lib/shopping-lists', () => ({
   fetchLists: () => Promise.resolve({ ok: true, data: [] }),
 }));
 
+// The Store tab loads from Supabase too; the gate test does not open it.
+jest.mock('@/lib/store', () => ({
+  fetchStore: () => Promise.resolve({ ok: true, data: null }),
+}));
+
 // The splash overlay animates the native splash away; it is not part of the gate.
 jest.mock('@/components/animated-icon', () => ({
   ...jest.requireActual('@/components/animated-icon'),

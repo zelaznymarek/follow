@@ -432,16 +432,16 @@ Ship to the installed APK over OTA and record the rollout and the resolved roadm
 
 #### Automated
 
-- [ ] 3.1 `/verify` passes (Biome, `npx tsc --noEmit` with typed routes regenerated, `npm test`)
-- [ ] 3.2 `npx jest store-screen store-name-screen zone-screen list-screen root-layout` passes
-- [ ] 3.3 `git diff main -- package.json biome.json` shows no changes
+- [x] 3.1 `/verify` passes (Biome, `npx tsc --noEmit` with typed routes regenerated, `npm test`)
+- [x] 3.2 `npx jest store-screen store-name-screen zone-screen list-screen root-layout` passes
+- [x] 3.3 `git diff main -- package.json biome.json` shows no changes
 
 #### Manual
 
-- [ ] 3.4 Web flow: name store, add zones, reorder, reload keeps order, duplicate refused, rename, delete with Cancel and confirm, rename store
-- [ ] 3.5 Emulator flow: same, tab bar and Store header visible, icon tinted in light and dark mode
-- [ ] 3.6 A list created after the store has `store_id` set; an earlier list stays `null`
-- [ ] 3.7 A second account sees no store and gets the "Name your store" form
+- [x] 3.4 Web flow: name store, add zones, reorder, reload keeps order, duplicate refused, rename, delete with Cancel and confirm, rename store
+- [x] 3.5 Emulator flow: same, tab bar and Store header visible, icon tinted in light and dark mode
+- [x] 3.6 A list created after the store has `store_id` set; an earlier list stays `null`
+- [x] 3.7 A second account sees no store and gets the "Name your store" form
 
 ### Phase 4: Rollout
 

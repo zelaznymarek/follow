@@ -10,15 +10,24 @@ export type ButtonProps = {
   disabled?: boolean;
   /** Shows a spinner and blocks presses while a request is in flight. */
   loading?: boolean;
+  /** The accessible name when the title alone is not enough (e.g. an arrow); defaults to the title. */
+  accessibilityLabel?: string;
 };
 
-export function Button({ title, onPress, disabled = false, loading = false }: ButtonProps) {
+export function Button({
+  title,
+  onPress,
+  disabled = false,
+  loading = false,
+  accessibilityLabel,
+}: ButtonProps) {
   const theme = useTheme();
   const inactive = disabled || loading;
 
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
       accessibilityState={{ busy: loading }}
       disabled={inactive}
       onPress={onPress}
