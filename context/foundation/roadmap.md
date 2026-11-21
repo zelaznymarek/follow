@@ -44,7 +44,7 @@ A household shopper arrives at the store with a list written in arbitrary order,
 | F-01 | first-android-deploy   | (foundation) app installs on Android phones from a preview build; backend project linked | —             | NFR: platforms, FR-001                                     | done        |
 | F-02 | play-internal-testing  | (foundation) app ships to the household through the Play internal-testing track      | F-01, Google Play verification cleared | NFR: platforms                    | proposed |
 | S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | done        |
-| S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | in-progress |
+| S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | done        |
 | S-03 | store-and-zones        | name the store, define its zones and reorder them                                    | S-01          | FR-006, FR-007, FR-008                                     | proposed |
 | S-04 | add-product-with-zone  | add a product to a list, giving it a zone the first time; remove a product           | S-02, S-03    | US-02, FR-010, FR-011, FR-012, FR-013, FR-020, FR-024      | proposed |
 | S-05 | offline-marking        | swipe to mark bought/unavailable, undo, and keep marking with no connection          | S-04          | US-03, FR-018, FR-019, FR-023, FR-026, NFR: offline        | proposed |
@@ -128,7 +128,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** First slice that stores real data in the account; the free backend tier pauses after 7 idle days (infrastructure.md), so its keep-alive mitigation lands here rather than earlier.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-03: Store and zones
 
@@ -257,3 +257,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog. Includ
 
 - **F-01: (foundation) the app installs on a physical Android phone from a preview build, over-the-air updates reach it, and the backend project exists and is linked to the repo with its connection settings in the build environment (deploy plan Phases 1–3).** — Archived 2026-11-20 → `context/archive/2026-11-15-first-android-deploy/`. Lesson: —.
 - **S-01: user can register, sign in, and stay signed in on their phone.** — Archived 2026-11-20 → `context/archive/2026-11-18-account-sign-in/`. Lesson: —.
+- **S-02: user can create a list, see all their lists on one screen, keep several at once, reopen one later, and delete one.** — Archived 2026-11-20 → `context/archive/2026-11-20-shopping-lists/`. Lesson: —.

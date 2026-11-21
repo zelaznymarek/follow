@@ -56,13 +56,14 @@ describe('<NewListScreen />', () => {
     expect(router.getRouterState()?.routes.at(-1)?.state?.routes).toHaveLength(1);
   });
 
-  test('offline shows that creating needs a connection', async () => {
+  test('offline shows that creating needs a connection and stays on New list', async () => {
     mockCreateList.mockResolvedValue({ ok: false, reason: 'offline' });
-    await renderScreen();
+    const router = await renderScreen();
 
     await userEvent.setup().press(screen.getByRole('button', { name: 'Create list' }));
 
     expect(await screen.findByText('Creating a list needs a connection.')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: 'Create list' })).toBeEnabled();
+    expect(router.getPathname()).toBe('/lists/new');
   });
 });

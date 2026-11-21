@@ -49,7 +49,9 @@ function useList(id: string) {
   const [load, setLoad] = useState<LoadState>({ status: 'loading' });
   const latestRequest = useRef(0);
 
-  // A stable callback so the effect below runs once per id, not on every render.
+  // The effect below re-runs whenever this callback changes, so it must be stable (once per id, not
+  // on every render). This is correctness, not a performance memo (the React Compiler does not run
+  // under Jest).
   const fetchCurrent = useCallback(async () => {
     latestRequest.current += 1;
     const request = latestRequest.current;
@@ -116,7 +118,12 @@ export default function ListScreen() {
     return (
       <ThemedView style={styles.centered}>
         <View style={styles.section}>
-          <ThemedText style={styles.centeredText}>{MESSAGES[load.status]}</ThemedText>
+          <ThemedText
+            accessibilityRole="alert"
+            accessibilityLiveRegion="polite"
+            style={styles.centeredText}>
+            {MESSAGES[load.status]}
+          </ThemedText>
           {load.status === 'missing' ? null : <Button title="Retry" onPress={retry} />}
         </View>
       </ThemedView>
