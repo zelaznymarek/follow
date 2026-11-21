@@ -19,27 +19,98 @@ export type Database = {
           created_at: string
           id: string
           name: string | null
+          store_id: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           name?: string | null
+          store_id?: string | null
           user_id?: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string | null
+          store_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_store_id_user_id_fkey"
+            columns: ["store_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      stores: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
           user_id?: string
         }
         Relationships: []
+      }
+      zones: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          position: number
+          store_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          position?: number
+          store_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          position?: number
+          store_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zones_store_id_user_id_fkey"
+            columns: ["store_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      move_zone: {
+        Args: { p_direction: string; p_zone_id: string }
+        Returns: undefined
+      }
       ping: { Args: never; Returns: number }
     }
     Enums: {
