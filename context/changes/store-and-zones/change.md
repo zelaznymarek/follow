@@ -1,7 +1,7 @@
 ---
 change_id: store-and-zones
 title: Store and zones
-status: impl_reviewed
+status: implemented
 created: 2026-11-21
 updated: 2026-11-21
 archived_at: null
