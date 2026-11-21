@@ -80,6 +80,20 @@ describe('<ListScreen />', () => {
     expect(await screen.findByText('Deleting needs a connection.')).toBeOnTheScreen();
   });
 
+  test('loading offline shows the offline message and Retry loads the list', async () => {
+    mockFetchList.mockResolvedValueOnce({ ok: false, reason: 'offline' });
+    await openList();
+
+    expect(
+      await screen.findByText("You're offline — this list will load when you're back online.")
+    ).toBeOnTheScreen();
+    await userEvent.setup().press(screen.getByRole('button', { name: 'Retry' }));
+
+    expect(await screen.findByText('No products yet')).toBeOnTheScreen();
+    expect(screen.getByText('Weekend')).toBeOnTheScreen();
+    expect(mockFetchList).toHaveBeenCalledTimes(2);
+  });
+
   test('a missing list says it no longer exists', async () => {
     mockFetchList.mockResolvedValue({ ok: true, data: null });
     await openList();

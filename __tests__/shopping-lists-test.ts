@@ -1,16 +1,23 @@
-import { createList, deleteList, fetchList, fetchLists } from '@/lib/shopping-lists';
+import {
+  createList,
+  deleteList,
+  fetchList,
+  fetchLists,
+  LOAD_TIMEOUT_MS,
+} from '@/lib/shopping-lists';
 
 type Response = { data: unknown; error: unknown; status: number };
 
-/** A postgrest-like query builder: every method chains, and awaiting it yields `response`. */
-function fakeQuery(response: Response) {
+/** A postgrest-like query builder: every method chains, and awaiting it yields `settled`. */
+function fakeQuery(settled: Promise<Response>) {
   const calls: { method: string; args: unknown[] }[] = [];
   const builder: Record<string, unknown> = {
     // biome-ignore lint/suspicious/noThenProperty: the builder is awaited like postgrest-js's.
     then: (resolve: (value: Response) => unknown, reject: (reason: unknown) => unknown) =>
-      Promise.resolve(response).then(resolve, reject),
+      settled.then(resolve, reject),
   };
-  for (const method of ['select', 'insert', 'delete', 'eq', 'order', 'single', 'maybeSingle']) {
+  const methods = ['select', 'insert', 'delete', 'eq', 'order', 'single', 'maybeSingle', 'retry'];
+  for (const method of methods) {
     builder[method] = (...args: unknown[]) => {
       calls.push({ method, args });
       return builder;
@@ -27,7 +34,13 @@ jest.mock('@/lib/supabase', () => ({
 }));
 
 function respond(response: Response) {
-  query = fakeQuery(response);
+  query = fakeQuery(Promise.resolve(response));
+  mockFrom.mockReturnValue(query.builder);
+}
+
+/** The server never answers (e.g. auth-js is still retrying a token refresh offline). */
+function hang() {
+  query = fakeQuery(new Promise(() => {}));
   mockFrom.mockReturnValue(query.builder);
 }
 
@@ -64,6 +77,7 @@ describe('fetchLists', () => {
       ['created_at', { ascending: false }],
       ['id', { ascending: false }],
     ]);
+    expect(argsOf('retry')).toEqual([[false]]);
     expect(result).toEqual({
       ok: true,
       data: [{ id: 'list-1', name: 'Weekend', createdAt: '2026-11-20T10:00:00Z' }],
@@ -77,12 +91,13 @@ describe('fetchLists', () => {
     expect(warn).not.toHaveBeenCalled();
   });
 
-  test('a thrown fetch error is offline', async () => {
+  test('a thrown error is logged and reported as error', async () => {
     mockFrom.mockImplementation(() => {
       throw new TypeError('Network request failed');
     });
 
-    expect(await fetchLists()).toEqual({ ok: false, reason: 'offline' });
+    expect(await fetchLists()).toEqual({ ok: false, reason: 'error' });
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 
   test('a permission error is an error and is logged', async () => {
@@ -95,6 +110,26 @@ describe('fetchLists', () => {
     expect(await fetchLists()).toEqual({ ok: false, reason: 'error' });
     expect(warn).toHaveBeenCalledTimes(1);
   });
+
+  describe('when the server does not answer in time', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+      hang();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('resolves offline after the load timeout', async () => {
+      const pending = fetchLists();
+
+      jest.advanceTimersByTime(LOAD_TIMEOUT_MS);
+
+      expect(await pending).toEqual({ ok: false, reason: 'offline' });
+      expect(warn).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe('fetchList', () => {
@@ -104,6 +139,7 @@ describe('fetchList', () => {
     const result = await fetchList('missing');
 
     expect(argsOf('eq')).toEqual([['id', 'missing']]);
+    expect(argsOf('retry')).toEqual([[false]]);
     expect(result).toEqual({ ok: true, data: null });
   });
 });

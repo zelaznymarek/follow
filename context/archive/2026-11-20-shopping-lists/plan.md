@@ -72,6 +72,7 @@ Corrections from `reviews/impl-review-phase-1.md`. The phase blocks below are ke
 - **Phase 2 §2 amendment (`listTitle`).** A name that is empty after trimming counts as unnamed and gets the date title, because the database check accepts whitespace-only names written directly over REST. Add a test case: `'   '` gives the date title.
 - **`gen:types`.** Writes to a temporary file and moves it into place only on success, so a failed run cannot leave an empty types file.
 - **Phase 3 correction (2026-11-20): types script.** Type generation moved from the `gen:types` npm script to `scripts/gen-types.sh`. The EAS fingerprint hashes `package.json` `scripts`, so the new npm script changed the runtime to `1b822e8b…`, and the first S-02 OTA (`5a48d52a`) went out on a runtime no APK has. Without it the fingerprint is `7c659def…` again.
+- **Phase 2 review (2026-11-21).** Reads use `.retry(false)`, and every list call is bounded by `LOAD_TIMEOUT_MS` (5 s) → offline. Without that, postgrest-js retries a failed GET 3 times (1/2/4 s), and an expired token adds about 25 s of auth refresh. Thrown errors are logged and reported as `error`, not offline. The Lists stack uses `unstable_settings = { anchor: 'index' }`.
 - **Phase 3 correction (2026-11-20): web Account icon.** Web tabs are text-only, so the web Account trigger got no icon. The person icon is native-only (`assets/images/tabIcons/account*.png`). `external-link.tsx` was also deleted, since nothing referenced it after Phase 2.
 
 ## What We're NOT Doing
@@ -483,4 +484,4 @@ Add the GitHub Actions keep-alive and remove the starter leftovers. Give the Acc
 - [x] 3.6 Pixel 5 online over OTA: create named and unnamed lists, reopen, delete with confirmation, the Account icon, light and dark mode — f28186b
 - [x] 3.7 Pixel 5 in airplane mode: still signed in, and My lists shows the offline message; Retry after reconnecting loads the lists — f28186b
 - [x] 3.8 Emulator: the lists created on the Pixel 5 appear for the same account — f28186b
-- [ ] 3.9 After the merge into `main`, the user adds the two secrets and a manual workflow run is green
+- [x] 3.9 After the merge into `main`, the user adds the two secrets and a manual workflow run is green — 9dd1956

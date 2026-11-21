@@ -36,7 +36,12 @@ export default function MyListsScreen() {
     return (
       <ThemedView style={styles.centered}>
         <View style={styles.message}>
-          <ThemedText style={styles.messageText}>{MESSAGES[state]}</ThemedText>
+          <ThemedText
+            accessibilityRole="alert"
+            accessibilityLiveRegion="polite"
+            style={styles.messageText}>
+            {MESSAGES[state]}
+          </ThemedText>
           <Button title="Retry" onPress={reload} />
         </View>
       </ThemedView>
