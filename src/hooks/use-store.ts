@@ -14,8 +14,11 @@ export type StoreValue = {
   store: Store | null;
   /** Loads again behind the spinner (Retry). */
   reload(): void;
-  /** Loads again while the current store stays visible (after a successful change). */
-  refresh(): void;
+  /**
+   * Loads again while the current store stays visible (after a change). Resolves once that load has
+   * settled, so a screen can wait for the new data before re-enabling its controls.
+   */
+  refresh(): Promise<void>;
 };
 
 /** The signed-in user's store and zones, loaded when the screen gains focus. */
@@ -53,7 +56,7 @@ export function useStore(): StoreValue {
   }
 
   function refresh() {
-    load();
+    return load();
   }
 
   return { state, store, reload, refresh };

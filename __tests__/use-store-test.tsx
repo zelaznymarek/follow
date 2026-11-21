@@ -85,7 +85,9 @@ describe('useStore', () => {
 
     const next = deferred();
     mockFetchStore.mockReturnValueOnce(next.promise);
-    await act(async () => value.refresh());
+    await act(async () => {
+      value.refresh();
+    });
 
     expect(shown()).toBe('ready|Corner shop');
 
@@ -95,13 +97,37 @@ describe('useStore', () => {
     expect(mockFetchStore).toHaveBeenCalledTimes(2);
   });
 
+  test('refresh() resolves once its load has settled', async () => {
+    mockFetchStore.mockResolvedValueOnce({ ok: true, data: STORE });
+    await renderHookScreen();
+    expect(await screen.findByText('ready|Corner shop')).toBeOnTheScreen();
+
+    const next = deferred();
+    mockFetchStore.mockReturnValueOnce(next.promise);
+    let settled = false;
+    await act(async () => {
+      value.refresh().then(() => {
+        settled = true;
+      });
+    });
+
+    expect(settled).toBe(false);
+
+    await act(async () => next.resolve({ ok: true, data: { ...STORE, name: 'Market' } }));
+
+    expect(settled).toBe(true);
+    expect(shown()).toBe('ready|Market');
+  });
+
   test('a failed refresh() reports offline and keeps the last store', async () => {
     mockFetchStore.mockResolvedValueOnce({ ok: true, data: STORE });
     await renderHookScreen();
     expect(await screen.findByText('ready|Corner shop')).toBeOnTheScreen();
 
     mockFetchStore.mockResolvedValueOnce({ ok: false, reason: 'offline' });
-    await act(async () => value.refresh());
+    await act(async () => {
+      value.refresh();
+    });
 
     expect(shown()).toBe('offline|Corner shop');
   });
@@ -128,7 +154,9 @@ describe('useStore', () => {
     mockFetchStore.mockReturnValueOnce(stale.promise).mockReturnValueOnce(fresh.promise);
     await renderHookScreen();
 
-    await act(async () => value.refresh());
+    await act(async () => {
+      value.refresh();
+    });
     await act(async () => fresh.resolve({ ok: true, data: { ...STORE, name: 'Market' } }));
     await act(async () => stale.resolve({ ok: true, data: STORE }));
 

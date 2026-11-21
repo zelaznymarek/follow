@@ -9,10 +9,7 @@ import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { confirmDelete } from '@/lib/confirm-delete';
-import { deleteZone, fetchZone, renameZone, type Zone } from '@/lib/store';
-
-/** Matches the database check on `zones.name`. */
-const NAME_MAX_LENGTH = 40;
+import { deleteZone, fetchZone, renameZone, type Zone, ZONE_NAME_MAX_LENGTH } from '@/lib/store';
 
 type LoadState =
   | { status: 'loading' }
@@ -27,7 +24,7 @@ const MESSAGES = {
 
 const SAVE_MESSAGES = {
   empty: 'Enter a zone name.',
-  duplicate: 'A zone with this name already exists',
+  duplicate: 'A zone with this name already exists.',
   offline: 'Renaming a zone needs a connection.',
   error: "Couldn't rename the zone. Try again.",
 } as const;
@@ -116,10 +113,16 @@ export default function ZoneScreen() {
 function ZoneForm({ zone }: { zone: Zone }) {
   const [name, setName] = useState(zone.name);
   const [nameError, setNameError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const busy = saving || deleting;
+
+  function handleChangeName(text: string) {
+    setName(text);
+    setNameError(null);
+  }
 
   async function handleSave() {
     if (busy) {
@@ -131,13 +134,18 @@ function ZoneForm({ zone }: { zone: Zone }) {
     }
     setSaving(true);
     setNameError(null);
+    setSaveError(null);
     try {
       const result = await renameZone(zone.id, name);
       if (result.ok) {
         leave();
         return;
       }
-      setNameError(SAVE_MESSAGES[result.reason]);
+      if (result.reason === 'duplicate') {
+        setNameError(SAVE_MESSAGES.duplicate);
+      } else {
+        setSaveError(SAVE_MESSAGES[result.reason]);
+      }
     } finally {
       setSaving(false);
     }
@@ -169,12 +177,22 @@ function ZoneForm({ zone }: { zone: Zone }) {
           <TextField
             label="Zone name"
             value={name}
-            onChangeText={setName}
+            onChangeText={handleChangeName}
             error={nameError ?? undefined}
-            maxLength={NAME_MAX_LENGTH}
+            maxLength={ZONE_NAME_MAX_LENGTH}
             editable={!busy}
             onSubmitEditing={handleSave}
           />
+
+          {saveError ? (
+            <ThemedText
+              accessibilityRole="alert"
+              accessibilityLiveRegion="assertive"
+              themeColor="error">
+              {saveError}
+            </ThemedText>
+          ) : null}
+
           <Button title="Save" onPress={handleSave} loading={saving} disabled={deleting} />
 
           {deleteError ? (

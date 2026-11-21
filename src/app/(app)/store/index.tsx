@@ -1,5 +1,5 @@
-import { Link } from 'expo-router';
-import { useState } from 'react';
+import { Link, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
@@ -14,19 +14,17 @@ import {
   createStore,
   type MoveDirection,
   moveZone,
+  STORE_NAME_MAX_LENGTH,
   type Store,
+  ZONE_NAME_MAX_LENGTH,
   type Zone,
 } from '@/lib/store';
-
-/** Matches the database checks on `stores.name` and `zones.name`. */
-const STORE_NAME_MAX_LENGTH = 80;
-const ZONE_NAME_MAX_LENGTH = 40;
 
 const MESSAGES = {
   offline: "You're offline — your store will load when you're back online.",
   error: "Couldn't load your store.",
   noZones: 'No zones yet',
-  storeExists: 'This account already has a store.',
+  storeExists: 'Your store was already set up, so here it is.',
 } as const;
 
 const CREATE_MESSAGES = {
@@ -37,7 +35,7 @@ const CREATE_MESSAGES = {
 
 const ADD_ZONE_MESSAGES = {
   empty: 'Enter a zone name.',
-  duplicate: 'A zone with this name already exists',
+  duplicate: 'A zone with this name already exists.',
   offline: 'Adding a zone needs a connection.',
   error: "Couldn't add the zone. Try again.",
 } as const;
@@ -52,7 +50,23 @@ export default function StoreScreen() {
   const theme = useTheme();
   const [notice, setNotice] = useState<string | null>(null);
 
-  if (state === 'loading') {
+  // The tab stays mounted, so the notice is dropped when the screen loses focus. useFocusEffect
+  // re-runs whenever its callback changes, so the callback must be stable (correctness, not a
+  // performance memo: the React Compiler does not run under Jest).
+  useFocusEffect(useCallback(() => () => setNotice(null), []));
+
+  function clearNotice() {
+    setNotice(null);
+  }
+
+  function handleRetry() {
+    setNotice(null);
+    reload();
+  }
+
+  // The full-screen states only stand in for a store that has never loaded; once one has, a failed
+  // or running reload keeps it (and any typed text) on screen.
+  if (store === null && state === 'loading') {
     return (
       <ThemedView style={styles.centered}>
         <ActivityIndicator color={theme.text} accessibilityLabel="Loading store" />
@@ -60,7 +74,7 @@ export default function StoreScreen() {
     );
   }
 
-  if (state === 'offline' || state === 'error') {
+  if (store === null && (state === 'offline' || state === 'error')) {
     return (
       <ThemedView style={styles.centered}>
         <View style={styles.section}>
@@ -70,14 +84,14 @@ export default function StoreScreen() {
             style={styles.centeredText}>
             {MESSAGES[state]}
           </ThemedText>
-          <Button title="Retry" onPress={reload} />
+          <Button title="Retry" onPress={handleRetry} />
         </View>
       </ThemedView>
     );
   }
 
   function handleStoreExists() {
-    // Another device named the store meanwhile: show that one instead of the form.
+    // Another device (or a create that timed out but landed) named the store: show it instead of the form.
     setNotice(MESSAGES.storeExists);
     refresh();
   }
@@ -86,13 +100,24 @@ export default function StoreScreen() {
     <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.section}>
+          {state === 'offline' || state === 'error' ? (
+            <View style={styles.reloadProblem}>
+              <ThemedText accessibilityRole="alert" accessibilityLiveRegion="polite">
+                {MESSAGES[state]}
+              </ThemedText>
+              <Button title="Retry" onPress={handleRetry} />
+            </View>
+          ) : null}
+          {state === 'loading' ? (
+            <ActivityIndicator color={theme.text} accessibilityLabel="Loading store" />
+          ) : null}
           {notice ? (
             <ThemedText accessibilityRole="alert" accessibilityLiveRegion="polite">
               {notice}
             </ThemedText>
           ) : null}
           {store ? (
-            <StoreDetails store={store} refresh={refresh} />
+            <StoreDetails store={store} refresh={refresh} onAction={clearNotice} />
           ) : (
             <CreateStoreForm onCreated={refresh} onStoreExists={handleStoreExists} />
           )}
@@ -110,19 +135,26 @@ function CreateStoreForm({
   onStoreExists: () => void;
 }) {
   const [name, setName] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  function handleChangeName(text: string) {
+    setName(text);
+    setNameError(null);
+  }
 
   async function handleSave() {
     if (submitting) {
       return;
     }
     if (!name.trim()) {
-      setError(CREATE_MESSAGES.empty);
+      setNameError(CREATE_MESSAGES.empty);
       return;
     }
     setSubmitting(true);
-    setError(null);
+    setNameError(null);
+    setFormError(null);
     const result = await createStore(name);
     if (result.ok) {
       // Stays disabled: the refreshed store replaces this form.
@@ -133,7 +165,7 @@ function CreateStoreForm({
       onStoreExists();
       return;
     }
-    setError(CREATE_MESSAGES[result.reason]);
+    setFormError(CREATE_MESSAGES[result.reason]);
     setSubmitting(false);
   }
 
@@ -143,18 +175,35 @@ function CreateStoreForm({
       <TextField
         label="Store name"
         value={name}
-        onChangeText={setName}
-        error={error ?? undefined}
+        onChangeText={handleChangeName}
+        error={nameError ?? undefined}
         maxLength={STORE_NAME_MAX_LENGTH}
         editable={!submitting}
         onSubmitEditing={handleSave}
       />
+      {formError ? (
+        <ThemedText
+          accessibilityRole="alert"
+          accessibilityLiveRegion="assertive"
+          themeColor="error">
+          {formError}
+        </ThemedText>
+      ) : null}
       <Button title="Save" onPress={handleSave} loading={submitting} />
     </>
   );
 }
 
-function StoreDetails({ store, refresh }: { store: Store; refresh: () => void }) {
+function StoreDetails({
+  store,
+  refresh,
+  onAction,
+}: {
+  store: Store;
+  refresh: () => Promise<void>;
+  /** Called when the user starts a change, so a leftover notice goes away. */
+  onAction: () => void;
+}) {
   const [moving, setMoving] = useState(false);
   const [moveError, setMoveError] = useState<string | null>(null);
 
@@ -162,15 +211,17 @@ function StoreDetails({ store, refresh }: { store: Store; refresh: () => void })
     if (moving) {
       return;
     }
+    onAction();
     setMoving(true);
     setMoveError(null);
     try {
       const result = await moveZone(zone.id, direction);
-      if (result.ok) {
-        refresh();
-      } else {
+      if (!result.ok) {
         setMoveError(MOVE_MESSAGES[result.reason]);
       }
+      // Reloads after a failed move too, so a zone deleted elsewhere disappears. The arrows stay
+      // disabled until the new order is on screen, so the next move acts on what the user sees.
+      await refresh();
     } finally {
       setMoving(false);
     }
@@ -183,9 +234,7 @@ function StoreDetails({ store, refresh }: { store: Store; refresh: () => void })
       <View style={styles.heading}>
         <ThemedText type="subtitle">{store.name}</ThemedText>
         <Link href="/store/name" asChild>
-          <Pressable
-            accessibilityRole="link"
-            style={({ pressed }) => [styles.link, pressed && styles.pressed]}>
+          <Pressable style={({ pressed }) => [styles.link, pressed && styles.pressed]}>
             <ThemedText type="smallBold" themeColor="textSecondary">
               Rename store
             </ThemedText>
@@ -219,7 +268,7 @@ function StoreDetails({ store, refresh }: { store: Store; refresh: () => void })
         </View>
       )}
 
-      <AddZoneForm storeId={store.id} onAdded={refresh} />
+      <AddZoneForm storeId={store.id} onAdded={refresh} onAction={onAction} />
     </>
   );
 }
@@ -261,33 +310,50 @@ function ZoneRow({
 }
 
 /** Closed until "Add zone" is pressed; stays open after an add so several zones go in one after another. */
-function AddZoneForm({ storeId, onAdded }: { storeId: string; onAdded: () => void }) {
+function AddZoneForm({
+  storeId,
+  onAdded,
+  onAction,
+}: {
+  storeId: string;
+  onAdded: () => void;
+  onAction: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  function handleOpen() {
+    onAction();
+    setOpen(true);
+  }
 
   function handleChangeName(text: string) {
     setName(text);
-    setError(null);
+    setNameError(null);
   }
 
   function handleCancel() {
     setOpen(false);
     setName('');
-    setError(null);
+    setNameError(null);
+    setFormError(null);
   }
 
   async function handleAdd() {
     if (submitting) {
       return;
     }
+    onAction();
     if (!name.trim()) {
-      setError(ADD_ZONE_MESSAGES.empty);
+      setNameError(ADD_ZONE_MESSAGES.empty);
       return;
     }
     setSubmitting(true);
-    setError(null);
+    setNameError(null);
+    setFormError(null);
     try {
       const result = await addZone(storeId, name);
       if (result.ok) {
@@ -295,14 +361,18 @@ function AddZoneForm({ storeId, onAdded }: { storeId: string; onAdded: () => voi
         onAdded();
         return;
       }
-      setError(ADD_ZONE_MESSAGES[result.reason]);
+      if (result.reason === 'duplicate') {
+        setNameError(ADD_ZONE_MESSAGES.duplicate);
+      } else {
+        setFormError(ADD_ZONE_MESSAGES[result.reason]);
+      }
     } finally {
       setSubmitting(false);
     }
   }
 
   if (!open) {
-    return <Button title="Add zone" onPress={() => setOpen(true)} />;
+    return <Button title="Add zone" onPress={handleOpen} />;
   }
 
   return (
@@ -311,11 +381,19 @@ function AddZoneForm({ storeId, onAdded }: { storeId: string; onAdded: () => voi
         label="New zone"
         value={name}
         onChangeText={handleChangeName}
-        error={error ?? undefined}
+        error={nameError ?? undefined}
         maxLength={ZONE_NAME_MAX_LENGTH}
         editable={!submitting}
         onSubmitEditing={handleAdd}
       />
+      {formError ? (
+        <ThemedText
+          accessibilityRole="alert"
+          accessibilityLiveRegion="assertive"
+          themeColor="error">
+          {formError}
+        </ThemedText>
+      ) : null}
       <Button title="Add" onPress={handleAdd} loading={submitting} />
       <Button title="Cancel" onPress={handleCancel} disabled={submitting} />
     </View>
@@ -345,6 +423,9 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: MaxContentWidth / 2,
     gap: Spacing.three,
+  },
+  reloadProblem: {
+    gap: Spacing.two,
   },
   heading: {
     gap: Spacing.one,

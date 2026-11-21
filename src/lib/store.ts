@@ -4,6 +4,12 @@ import type { Tables } from '@/lib/database.types';
 import { type RequestResult, run, runUnique } from '@/lib/request';
 import { getSupabase } from '@/lib/supabase';
 
+/** Longest store name; matches the database check on `stores.name`. */
+export const STORE_NAME_MAX_LENGTH = 80;
+
+/** Longest zone name; matches the database check on `zones.name`. */
+export const ZONE_NAME_MAX_LENGTH = 40;
+
 export type Zone = { id: string; name: string; position: number };
 
 export type Store = { id: string; name: string; zones: Zone[] };
