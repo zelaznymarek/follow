@@ -3,7 +3,7 @@ project: Follow
 version: 1
 status: draft                    # draft | active | locked
 created: 2026-11-15
-updated: 2026-11-20
+updated: 2026-11-21
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -45,7 +45,7 @@ A household shopper arrives at the store with a list written in arbitrary order,
 | F-02 | play-internal-testing  | (foundation) app ships to the household through the Play internal-testing track      | F-01, Google Play verification cleared | NFR: platforms                    | proposed |
 | S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | done        |
 | S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | done        |
-| S-03 | store-and-zones        | name the store, define its zones and reorder them                                    | S-01          | FR-006, FR-007, FR-008                                     | proposed |
+| S-03 | store-and-zones        | name the store, define its zones and reorder them                                    | S-01          | FR-006, FR-007, FR-008                                     | in-progress |
 | S-04 | add-product-with-zone  | add a product to a list, giving it a zone the first time; remove a product           | S-02, S-03    | US-02, FR-010, FR-011, FR-012, FR-013, FR-020, FR-024      | proposed |
 | S-05 | offline-marking        | swipe to mark bought/unavailable, undo, and keep marking with no connection          | S-04          | US-03, FR-018, FR-019, FR-023, FR-026, NFR: offline        | proposed |
 | S-06 | route-ordered-list     | see the list grouped under zone headings in route order, fast                        | S-04          | US-01, FR-015, NFR: list opens < 1 s                       | proposed |
@@ -141,7 +141,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Does the user name the store explicitly before adding the first product, or is the store name asked for the first time a zone is needed? — Owner: user. Block: no.
 - **Risk:** Must land before S-04 because zones created inline are appended to this store's route (FR-024); reordering uses up/down controls rather than drag-and-drop (shape-notes, Forward: tech-stack).
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-04: Add a product with its zone
 
