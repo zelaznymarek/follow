@@ -390,6 +390,7 @@ Ship to the installed APK over OTA and record the rollout and the resolved roadm
 - **Schema.** New empty tables, three functions, and one nullable column on `shopping_lists`; existing lists keep `store_id = null`.
 - **Rollback.** A follow-up migration that drops the `shopping_lists_set_store` trigger and function, the `store_id` column, `move_zone`, `zones` (with its trigger and function) and `stores`. The pre-push schema dump stays in `~/follow-backups/`.
 - **App.** The S-01/S-02 APK (runtime `7c659def…`) receives S-03 over OTA; no build.
+- **Addendum 2026-11-21 (Phase 1 review).** `20261121130000_harden_store_and_zones.sql` follows the Phase 1 migration: `authenticated` may update only `stores (name)` and `zones (name, position)`; `zones_set_position` raises `PT404` when the store is not visible; both store-row locks are `for no key update`; `move_zone` raises `PT404` (HTTP 404) for a missing zone; indexes on `zones (user_id)` and `shopping_lists (store_id)`; `btrim(name) = name` checks on both name columns. Phase 2 updates only those columns, and a zone-insert or move error for a missing zone maps to `error`. See `reviews/impl-review-phase-1.md`.
 
 ## References
 
@@ -409,15 +410,15 @@ Ship to the installed APK over OTA and record the rollout and the resolved roadm
 
 #### Automated
 
-- [x] 1.1 `npx supabase db push --remote --dry-run` output lists only the new `create_store_and_zones` migration (run by the user, output pasted)
-- [x] 1.2 `sh scripts/gen-types.sh` succeeds and `src/lib/database.types.ts` contains `stores`, `zones`, `store_id` on `shopping_lists` and `move_zone`
-- [x] 1.3 Anonymous REST checks with the publishable key: `GET /rest/v1/stores` and `GET /rest/v1/zones` return 401, and `POST /rest/v1/rpc/move_zone` is refused
-- [x] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`)
+- [x] 1.1 `npx supabase db push --remote --dry-run` output lists only the new `create_store_and_zones` migration (run by the user, output pasted) — 6bcce2a
+- [x] 1.2 `sh scripts/gen-types.sh` succeeds and `src/lib/database.types.ts` contains `stores`, `zones`, `store_id` on `shopping_lists` and `move_zone` — 6bcce2a
+- [x] 1.3 Anonymous REST checks with the publishable key: `GET /rest/v1/stores` and `GET /rest/v1/zones` return 401, and `POST /rest/v1/rpc/move_zone` is refused — 6bcce2a
+- [x] 1.4 `/verify` passes (Biome, `npx tsc --noEmit`, `npm test`) — 6bcce2a
 
 #### Manual
 
-- [x] 1.5 The user confirms the backup file exists in `~/follow-backups/` and the push succeeded (`migration list --remote` shows the migration on remote)
-- [x] 1.6 SQL editor grants query shows `authenticated` and `service_role` on `stores` and `zones`, and no `anon`
+- [x] 1.5 The user confirms the backup file exists in `~/follow-backups/` and the push succeeded (`migration list --remote` shows the migration on remote) — 6bcce2a
+- [x] 1.6 SQL editor grants query shows `authenticated` and `service_role` on `stores` and `zones`, and no `anon` — 6bcce2a
 
 ### Phase 2: Data layer
 
