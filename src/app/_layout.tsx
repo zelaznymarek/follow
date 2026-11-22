@@ -1,33 +1,15 @@
-import { DarkTheme, DefaultTheme, Stack, type Theme, ThemeProvider } from 'expo-router';
+import { Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { Platform, StyleSheet } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
+import { DarkNavigationTheme, LightNavigationTheme } from '@/constants/navigation-theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useSession } from '@/hooks/use-session';
 import { SessionProvider } from '@/providers/session-provider';
 
 SplashScreen.preventAutoHideAsync();
-
-/** React Navigation theme in the app palette, so headers match the screens under them. */
-function navigationTheme(base: Theme, colors: (typeof Colors)['light' | 'dark']): Theme {
-  return {
-    ...base,
-    colors: {
-      primary: colors.primary,
-      background: colors.background,
-      card: colors.background,
-      text: colors.text,
-      border: colors.backgroundSelected,
-      notification: colors.error,
-    },
-  };
-}
-
-const LightNavigationTheme = navigationTheme(DefaultTheme, Colors.light);
-const DarkNavigationTheme = navigationTheme(DarkTheme, Colors.dark);
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

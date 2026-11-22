@@ -57,3 +57,17 @@ contrast, so it is kept.
 | ------------------ | ----- | ------------------------------------ |
 | `pressed`          | 0.7   | pressable while pressed              |
 | `disabled`         | 0.5   | disabled or loading control          |
+
+## States
+
+My lists, 7-state matrix. Cells are on `/kitchen-sink` (dev only).
+
+| State         | Where                                                                                                                         |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| default       | Shown in kitchen sink (My lists → Ready)                                                                                      |
+| hover         | N/A — touch-only product (PRD: iOS and Android phones); no pointer, so no hover                                               |
+| focus-visible | N/A — touch-only product (PRD: iOS and Android phones); no keyboard, so no focus ring                                         |
+| disabled      | N/A on My lists — no control there is ever disabled; shown in kitchen sink (Button → Disabled, primary and secondary)         |
+| error         | Shown in kitchen sink (My lists → Error, heading in `error`); the neutral offline message is My lists → Offline               |
+| empty         | Shown in kitchen sink (My lists → Empty)                                                                                      |
+| loading       | Shown in kitchen sink (My lists → Loading: New list placeholder and three placeholder `Card`s in the Ready content container)  |

@@ -27,7 +27,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Platform-specific code uses `.web.tsx` / `.web.ts` suffixes or `Platform.select`. `web.output` is `"server"`, so the first web render must match the server output: get the color scheme from `@/hooks/use-color-scheme` (never `useColorScheme` from `react-native`), and gate any other client-only value (e.g. `window`) behind a `hasHydrated` flag set in `useEffect`, as `src/hooks/use-color-scheme.web.ts` does.
 - File names are kebab-case; components use named exports, route files use default exports.
-- Style with `StyleSheet.create` plus tokens from `@/constants/theme` (`Colors`, `Spacing`, `Fonts`) and the `ThemedText` / `ThemedView` components — no hardcoded colors.
+- Style with `StyleSheet.create` plus tokens from `@/constants/theme`: `Colors` (incl. `primary` / `onPrimary`), `Spacing`, `Radius`, `Opacity`, `Fonts`. No colour, radius or opacity literals in views — `__tests__/design-tokens-test.ts` fails on them.
+- Before creating a component, check `src/components/`: `Button` (`variant` `primary` / `secondary`), `Card`, `TextField`, `ThemedText`, `ThemedView`.
+- Show every state of a new or changed view on `/kitchen-sink` (`src/app/kitchen-sink.tsx`, dev only) and check it there.
 
 ## Product context
 
