@@ -101,6 +101,7 @@ function StateMessage({ kind, action }: { kind: keyof typeof MESSAGES; action: R
   return (
     <View style={styles.message}>
       <View
+        accessible={announce}
         accessibilityRole={announce ? 'alert' : undefined}
         accessibilityLiveRegion={announce ? 'polite' : undefined}
         style={styles.messageText}>

@@ -8,8 +8,15 @@ import path from 'node:path';
  * literal in a view drifts from the palette and skips dark mode.
  */
 const ROOT = path.join(__dirname, '..');
-const SCANNED_DIRS = ['src/app', 'src/components'];
-const LITERALS = [/#[0-9a-fA-F]{3,8}\b/, /rgba?\(/, /borderRadius: [0-9]/, /opacity: [0-9]/];
+const SCANNED_DIRS = ['src/app', 'src/components', 'src/hooks'];
+const LITERALS = [
+  /#[0-9a-fA-F]{3,8}\b/,
+  /\b(?:rgba?|hsla?|oklch)\(/,
+  // borderRadius and per-corner radii, as a number or borrowed from Spacing.
+  /\b\w*[Rr]adius\s*:\s*(?:[-.\d]|Spacing\.)/,
+  // opacity and shadowOpacity, including a number inside a condition.
+  /\b\w*[Oo]pacity\s*:[^,;}]*?(?<![\w.])\d/,
+];
 
 const SKIPPED = new Set([
   // The token source itself.
@@ -18,6 +25,8 @@ const SKIPPED = new Set([
   // scope for the design tokens (my-lists-ui). The .web.tsx file is the same splash on web.
   'src/components/animated-icon.tsx',
   'src/components/animated-icon.web.tsx',
+  // Web tab bar: its pill shapes use Spacing as radius; kept as is (user decision, my-lists-ui review F3).
+  'src/components/app-tabs.web.tsx',
 ]);
 
 function sourceFiles(dir: string): string[] {
