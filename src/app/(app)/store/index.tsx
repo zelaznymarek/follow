@@ -3,10 +3,11 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
+import { Card } from '@/components/card';
 import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, MaxContentWidth, Opacity, Spacing } from '@/constants/theme';
 import { useStore } from '@/hooks/use-store';
 import { useTheme } from '@/hooks/use-theme';
 import {
@@ -287,7 +288,7 @@ function ZoneRow({
   onMove: (zone: Zone, direction: MoveDirection) => void;
 }) {
   return (
-    <ThemedView type="backgroundElement" style={styles.row}>
+    <Card style={styles.row}>
       <Link href={{ pathname: '/store/zones/[id]', params: { id: zone.id } }} asChild>
         <Pressable style={({ pressed }) => [styles.rowName, pressed && styles.pressed]}>
           <ThemedText type="smallBold">{zone.name}</ThemedText>
@@ -307,7 +308,7 @@ function ZoneRow({
         disabled={moving || !canMoveDown}
         variant="secondary"
       />
-    </ThemedView>
+    </Card>
   );
 }
 
@@ -446,10 +447,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
-    paddingLeft: Spacing.three,
     paddingRight: Spacing.two,
     paddingVertical: Spacing.two,
-    borderRadius: Spacing.three,
   },
   rowName: {
     flex: 1,
@@ -461,6 +460,6 @@ const styles = StyleSheet.create({
     marginTop: Spacing.three,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: Opacity.pressed,
   },
 });

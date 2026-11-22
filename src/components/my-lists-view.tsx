@@ -2,9 +2,10 @@ import { Link } from 'expo-router';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
+import { Card } from '@/components/card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, MaxContentWidth, Opacity, Spacing } from '@/constants/theme';
 import type { ShoppingListsState } from '@/hooks/use-shopping-lists';
 import { useTheme } from '@/hooks/use-theme';
 import { formatListDate, listTitle } from '@/lib/list-title';
@@ -76,12 +77,12 @@ function ListRow({ list }: { list: ShoppingList }) {
   return (
     <Link href={{ pathname: '/lists/[id]', params: { id: list.id } }} asChild>
       <Pressable style={({ pressed }) => pressed && styles.pressed}>
-        <ThemedView type="backgroundElement" style={styles.row}>
+        <Card style={styles.row}>
           <ThemedText type="smallBold">{listTitle(list)}</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {formatListDate(list.createdAt)}
           </ThemedText>
-        </ThemedView>
+        </Card>
       </Pressable>
     </Link>
   );
@@ -117,11 +118,8 @@ const styles = StyleSheet.create({
   },
   row: {
     gap: Spacing.half,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.three,
-    borderRadius: Spacing.three,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: Opacity.pressed,
   },
 });

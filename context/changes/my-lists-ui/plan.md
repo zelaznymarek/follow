@@ -466,29 +466,29 @@ None; no data or API changes. Ships with the next OTA update (no `package.json` 
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Type check passes: `npx tsc --noEmit`
-- [x] 2.3 Tests pass: `npm test`
-- [x] 2.4 No colour literal left in `src/components/themed-text.tsx`
+- [x] 2.1 Lint passes: `npm run lint` — af820fc
+- [x] 2.2 Type check passes: `npx tsc --noEmit` — af820fc
+- [x] 2.3 Tests pass: `npm test` — af820fc
+- [x] 2.4 No colour literal left in `src/components/themed-text.tsx` — af820fc
 
 #### Manual
 
-- [x] 2.5 Kitchen sink, sign-in and Store screenshots show Teal primary, neutral secondary buttons, and a header the same colour as the content in both schemes
-- [x] 2.6 Button labels are readable on both variants in both schemes
+- [x] 2.5 Kitchen sink, sign-in and Store screenshots show Teal primary, neutral secondary buttons, and a header the same colour as the content in both schemes — af820fc
+- [x] 2.6 Button labels are readable on both variants in both schemes — af820fc
 
 ### Phase 3: Shared Card
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Type check passes: `npx tsc --noEmit`
-- [ ] 3.3 Tests pass: `npm test`
-- [ ] 3.4 No `borderRadius` or `opacity` number literal in the three screens
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Type check passes: `npx tsc --noEmit`
+- [x] 3.3 Tests pass: `npm test`
+- [x] 3.4 No `borderRadius` or `opacity` number literal in the three screens
 
 #### Manual
 
-- [ ] 3.5 My lists, Account and Store screenshots show identical card corners and surface colour
-- [ ] 3.6 Store zone rows still fit the name and both arrow buttons at 390 px width
+- [x] 3.5 My lists, Account and Store screenshots show identical card corners and surface colour
+- [x] 3.6 Store zone rows still fit the name and both arrow buttons at 390 px width
 
 ### Phase 4: States and guardrail
 

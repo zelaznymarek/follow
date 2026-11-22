@@ -29,3 +29,9 @@ UI change started via `/10x-ui`.
 - **Extra secondary buttons (user decision):** besides the plan's Retry/Cancel/↑↓, the two Retry buttons in `store/name.tsx` and the "Delete zone" / "Delete list" buttons use `variant="secondary"`, so Teal marks only the positive action. A destructive (red) variant remains a follow-up.
 - **Back arrow:** on web and Android React Navigation tints the header back button with `text`, not `primary`; only iOS uses the accent. Accepted as the platform convention.
 - **Store screenshots** are dark-only (`phase-2-store-dark-desktop.jpg`, `phase-2-zone-dark-desktop.jpg`), taken after the user signed in.
+
+### Phase 3 notes
+
+- **Screenshots** are dark-only (the system was in dark mode): `phase-3-kitchen-sink-dark-desktop-1/-2.jpg`, `phase-3-account-dark-desktop.jpg`, `phase-3-store-dark-desktop.jpg`, `phase-3-store-dark-mobile.jpg`, `phase-3-account-and-lists-dark-mobile.jpg` (Account and kitchen-sink "Ready" side by side at 390 px). The signed-in email was replaced with `user@example.com` in the page before each Account shot.
+- **Kitchen sink:** `Card` has its own labelled "Card" section below the Button grid, not a cell inside it.
+- **Store rows on web:** the arrows sit right after the zone name instead of at the right edge, although `rowName` has `flex: 1` — same as in `phase-2-store-dark-desktop.jpg`, so not caused by `Card` (likely `Link asChild` on web). Left as is.

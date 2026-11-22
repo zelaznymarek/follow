@@ -2,6 +2,7 @@ import { Redirect } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
+import { Card } from '@/components/card';
 import { MyListsView } from '@/components/my-lists-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -84,6 +85,20 @@ function KitchenSink() {
             <Button title="Loading" onPress={noop} variant="secondary" loading />
           </View>
         </View>
+
+        <ThemedText type="smallBold" themeColor="textSecondary">
+          Card
+        </ThemedText>
+        <View style={styles.grid}>
+          <View style={styles.column}>
+            <Card style={styles.cardSample}>
+              <ThemedText type="smallBold">Card title</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Secondary text inside a card
+              </ThemedText>
+            </Card>
+          </View>
+        </View>
       </ScrollView>
     </ThemedView>
   );
@@ -114,5 +129,8 @@ const styles = StyleSheet.create({
   },
   buttonCell: {
     width: 160,
+  },
+  cardSample: {
+    gap: Spacing.half,
   },
 });

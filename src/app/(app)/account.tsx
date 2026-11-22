@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
+import { Card } from '@/components/card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
@@ -33,12 +34,12 @@ export default function AccountScreen() {
         <View style={styles.content}>
           <ThemedText type="subtitle">Account</ThemedText>
 
-          <ThemedView type="backgroundElement" style={styles.card}>
+          <Card style={styles.card}>
             <ThemedText type="small" themeColor="textSecondary">
               Signed in as
             </ThemedText>
             <ThemedText>{email ?? 'No email on this account'}</ThemedText>
-          </ThemedView>
+          </Card>
 
           <Button title="Sign out" onPress={handleSignOut} loading={signingOut} />
         </View>
@@ -68,8 +69,5 @@ const styles = StyleSheet.create({
   },
   card: {
     gap: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.three,
-    borderRadius: Spacing.three,
   },
 });
