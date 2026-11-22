@@ -494,13 +494,13 @@ None; no data or API changes. Ships with the next OTA update (no `package.json` 
 
 #### Automated
 
-- [x] 4.1 Lint passes: `npm run lint`
-- [x] 4.2 Type check passes: `npx tsc --noEmit`
-- [x] 4.3 Tests pass, including the new scan: `npm test`
-- [x] 4.4 Scan test fails when a `#ff0000` literal is temporarily added to `src/components/card.tsx`
+- [x] 4.1 Lint passes: `npm run lint` — 92c299d
+- [x] 4.2 Type check passes: `npx tsc --noEmit` — 92c299d
+- [x] 4.3 Tests pass, including the new scan: `npm test` — 92c299d
+- [x] 4.4 Scan test fails when a `#ff0000` literal is temporarily added to `src/components/card.tsx` — 92c299d
 
 #### Manual
 
-- [x] 4.5 Kitchen-sink screenshots show all five My lists states; loading → ready causes no visible jump
-- [x] 4.6 `tokens.md` 7-state table has every row shown or N/A with reason
-- [x] 4.7 UI quality checklist walked for My lists
+- [x] 4.5 Kitchen-sink screenshots show all five My lists states; loading → ready causes no visible jump — 92c299d
+- [x] 4.6 `tokens.md` 7-state table has every row shown or N/A with reason — 92c299d
+- [x] 4.7 UI quality checklist walked for My lists — 92c299d

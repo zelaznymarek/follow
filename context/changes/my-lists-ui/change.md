@@ -1,7 +1,7 @@
 ---
 change_id: my-lists-ui
 title: My lists UI audit and design-system contract
-status: impl_reviewed
+status: implemented
 created: 2026-11-22
 updated: 2026-11-22
 archived_at: null
