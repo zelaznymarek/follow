@@ -84,7 +84,7 @@ export default function StoreScreen() {
             style={styles.centeredText}>
             {MESSAGES[state]}
           </ThemedText>
-          <Button title="Retry" onPress={handleRetry} />
+          <Button title="Retry" onPress={handleRetry} variant="secondary" />
         </View>
       </ThemedView>
     );
@@ -105,7 +105,7 @@ export default function StoreScreen() {
               <ThemedText accessibilityRole="alert" accessibilityLiveRegion="polite">
                 {MESSAGES[state]}
               </ThemedText>
-              <Button title="Retry" onPress={handleRetry} />
+              <Button title="Retry" onPress={handleRetry} variant="secondary" />
             </View>
           ) : null}
           {state === 'loading' ? (
@@ -298,12 +298,14 @@ function ZoneRow({
         accessibilityLabel={`Move ${zone.name} up`}
         onPress={() => onMove(zone, 'up')}
         disabled={moving || !canMoveUp}
+        variant="secondary"
       />
       <Button
         title="↓"
         accessibilityLabel={`Move ${zone.name} down`}
         onPress={() => onMove(zone, 'down')}
         disabled={moving || !canMoveDown}
+        variant="secondary"
       />
     </ThemedView>
   );
@@ -398,7 +400,7 @@ function AddZoneForm({
         </ThemedText>
       ) : null}
       <Button title="Add" onPress={handleAdd} loading={submitting} />
-      <Button title="Cancel" onPress={handleCancel} disabled={submitting} />
+      <Button title="Cancel" onPress={handleCancel} disabled={submitting} variant="secondary" />
     </View>
   );
 }

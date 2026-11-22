@@ -27,7 +27,10 @@ const LIST_STATES: { label: string; state: ShoppingListsState; lists: ShoppingLi
 
 function noop() {}
 
-/** Dev-only page showing every My lists state and the Button states side by side. */
+/**
+ * Dev-only page showing every My lists state and the Button states side by side. Meant for web
+ * screenshots: on native the nested FlatList inside this ScrollView logs a VirtualizedList warning.
+ */
 export default function KitchenSinkScreen() {
   if (!__DEV__) {
     return <Redirect href="/" />;
@@ -70,6 +73,15 @@ function KitchenSink() {
           </View>
           <View style={styles.buttonCell}>
             <Button title="Loading" onPress={noop} loading />
+          </View>
+          <View style={styles.buttonCell}>
+            <Button title="Secondary" onPress={noop} variant="secondary" />
+          </View>
+          <View style={styles.buttonCell}>
+            <Button title="Disabled" onPress={noop} variant="secondary" disabled />
+          </View>
+          <View style={styles.buttonCell}>
+            <Button title="Loading" onPress={noop} variant="secondary" loading />
           </View>
         </View>
       </ScrollView>

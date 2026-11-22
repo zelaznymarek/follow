@@ -453,28 +453,28 @@ None; no data or API changes. Ships with the next OTA update (no `package.json` 
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Type check passes: `npx tsc --noEmit`
-- [x] 1.3 Tests pass: `npm test`
+- [x] 1.1 Lint passes: `npm run lint` — 3f0dc46
+- [x] 1.2 Type check passes: `npx tsc --noEmit` — 3f0dc46
+- [x] 1.3 Tests pass: `npm test` — 3f0dc46
 
 #### Manual
 
-- [x] 1.4 `/kitchen-sink` shows all five My lists states and the Button states, matching today's look
-- [x] 1.5 Baseline screenshots saved (desktop, mobile, dark desktop)
+- [x] 1.4 `/kitchen-sink` shows all five My lists states and the Button states, matching today's look — 3f0dc46
+- [x] 1.5 Baseline screenshots saved (desktop, mobile, dark desktop) — 3f0dc46
 
 ### Phase 2: Tokens and Button
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Type check passes: `npx tsc --noEmit`
-- [ ] 2.3 Tests pass: `npm test`
-- [ ] 2.4 No colour literal left in `src/components/themed-text.tsx`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Type check passes: `npx tsc --noEmit`
+- [x] 2.3 Tests pass: `npm test`
+- [x] 2.4 No colour literal left in `src/components/themed-text.tsx`
 
 #### Manual
 
-- [ ] 2.5 Kitchen sink, sign-in and Store screenshots show Teal primary, neutral secondary buttons, and a header the same colour as the content in both schemes
-- [ ] 2.6 Button labels are readable on both variants in both schemes
+- [x] 2.5 Kitchen sink, sign-in and Store screenshots show Teal primary, neutral secondary buttons, and a header the same colour as the content in both schemes
+- [x] 2.6 Button labels are readable on both variants in both schemes
 
 ### Phase 3: Shared Card
 

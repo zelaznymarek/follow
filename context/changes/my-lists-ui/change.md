@@ -1,7 +1,7 @@
 ---
 change_id: my-lists-ui
 title: My lists UI audit and design-system contract
-status: implementing
+status: impl_reviewed
 created: 2026-11-22
 updated: 2026-11-22
 archived_at: null
@@ -16,4 +16,16 @@ UI change started via `/10x-ui`.
 - **Contract variant:** existing design system (Expo starter theme + `Button`, `TextField`, `ThemedText`, `ThemedView`) — extend it, no new dependencies.
 - **Why not `lists/[id].tsx`:** it only shows "No products yet" until S-04; S-04–S-06 will rebuild it and inherit the tokens from this change.
 - **Screenshots:** `context/changes/my-lists-ui/screenshots/` (desktop + one mobile width per visual phase).
-- **Open decision (user):** accent (`primary`) color — to be chosen at `/10x-plan`.
+- **Open decision (user):** accent (`primary`) color — to be chosen at `/10x-plan`. Resolved: Radix Teal (see `plan.md`).
+
+### Phase 1 notes
+
+- **Screenshot files:** `phase-1-kitchen-sink-desktop-1.jpg` / `-desktop-2.jpg` (top and bottom of the page), `phase-1-kitchen-sink-mobile-1.png` / `-mobile-2.png`, `phase-1-kitchen-sink-dark-desktop.jpg`, plus `phase-1-focus-outline-desktop.png`. Later phases use the same naming.
+- **Widths:** desktop is 1512 px (the Chrome window is maximised and cannot be resized); mobile is a 390 px iframe of `/kitchen-sink`.
+- **Focus outline (research Open Question 3):** the web build shows the browser's default blue focus outline on list rows when tabbing, so marking focus-visible N/A leaves keyboard focus visible.
+
+### Phase 2 notes
+
+- **Extra secondary buttons (user decision):** besides the plan's Retry/Cancel/↑↓, the two Retry buttons in `store/name.tsx` and the "Delete zone" / "Delete list" buttons use `variant="secondary"`, so Teal marks only the positive action. A destructive (red) variant remains a follow-up.
+- **Back arrow:** on web and Android React Navigation tints the header back button with `text`, not `primary`; only iOS uses the accent. Accepted as the platform convention.
+- **Store screenshots** are dark-only (`phase-2-store-dark-desktop.jpg`, `phase-2-zone-dark-desktop.jpg`), taken after the user signed in.

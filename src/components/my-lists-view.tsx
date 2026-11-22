@@ -45,7 +45,7 @@ export function MyListsView({ state, lists, onRetry, onNewList }: MyListsViewPro
             style={styles.messageText}>
             {MESSAGES[state]}
           </ThemedText>
-          <Button title="Retry" onPress={onRetry} />
+          <Button title="Retry" onPress={onRetry} variant="secondary" />
         </View>
       </ThemedView>
     );

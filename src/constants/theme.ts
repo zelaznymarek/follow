@@ -1,6 +1,7 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://unistyl.es/), etc.
+ * Design tokens for the app, in light and dark mode. Colour values come from Radix Colors: Slate for
+ * the grays, Teal for the accent. Step names, sources and contrast checks are recorded in
+ * context/changes/my-lists-ui/tokens.md.
  */
 
 import '@/global.css';
@@ -15,6 +16,8 @@ export const Colors = {
     backgroundSelected: '#E0E1E6',
     textSecondary: '#60646C',
     error: '#CE2C31',
+    primary: '#008573',
+    onPrimary: '#ffffff',
   },
   dark: {
     text: '#ffffff',
@@ -23,6 +26,8 @@ export const Colors = {
     backgroundSelected: '#2E3135',
     textSecondary: '#B0B4BA',
     error: '#FF6369',
+    primary: '#12a594',
+    onPrimary: '#0d1514',
   },
 } as const;
 
@@ -61,6 +66,17 @@ export const Spacing = {
   four: 24,
   five: 32,
   six: 64,
+} as const;
+
+/** `control` for buttons and inputs, `card` for cards. */
+export const Radius = {
+  control: 12,
+  card: 16,
+} as const;
+
+export const Opacity = {
+  pressed: 0.7,
+  disabled: 0.5,
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
