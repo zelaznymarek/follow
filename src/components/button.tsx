@@ -1,7 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
+import { Opacity, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ButtonProps = {
@@ -12,6 +12,8 @@ export type ButtonProps = {
   loading?: boolean;
   /** The accessible name when the title alone is not enough (e.g. an arrow); defaults to the title. */
   accessibilityLabel?: string;
+  /** `primary` (accent) for the main action of a screen area; `secondary` (neutral) for helper actions. */
+  variant?: 'primary' | 'secondary';
 };
 
 export function Button({
@@ -20,9 +22,12 @@ export function Button({
   disabled = false,
   loading = false,
   accessibilityLabel,
+  variant = 'primary',
 }: ButtonProps) {
   const theme = useTheme();
   const inactive = disabled || loading;
+  const fill = variant === 'primary' ? 'primary' : 'backgroundSelected';
+  const content = variant === 'primary' ? 'onPrimary' : 'text';
 
   return (
     <Pressable
@@ -33,12 +38,12 @@ export function Button({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
-        { backgroundColor: theme.text },
+        { backgroundColor: theme[fill] },
         pressed && styles.pressed,
         inactive && styles.inactive,
       ]}>
-      {loading ? <ActivityIndicator size="small" color={theme.background} /> : null}
-      <ThemedText type="smallBold" themeColor="background">
+      {loading ? <ActivityIndicator size="small" color={theme[content]} /> : null}
+      <ThemedText type="smallBold" themeColor={content}>
         {title}
       </ThemedText>
     </Pressable>
@@ -55,12 +60,12 @@ const styles = StyleSheet.create({
     minHeight: 44,
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two,
-    borderRadius: Spacing.three,
+    borderRadius: Radius.control,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: Opacity.pressed,
   },
   inactive: {
-    opacity: 0.5,
+    opacity: Opacity.disabled,
   },
 });

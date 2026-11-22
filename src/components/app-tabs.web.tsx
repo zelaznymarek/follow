@@ -8,7 +8,7 @@ import {
 } from 'expo-router/ui';
 import { Pressable, StyleSheet, type View } from 'react-native';
 
-import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { MaxContentWidth, Opacity, Spacing } from '@/constants/theme';
 
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   pressed: {
-    opacity: 0.7,
+    opacity: Opacity.pressed,
   },
   tabButtonView: {
     paddingVertical: Spacing.one,

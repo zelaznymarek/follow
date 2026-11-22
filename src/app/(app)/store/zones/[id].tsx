@@ -111,7 +111,9 @@ export default function ZoneScreen() {
             style={styles.centeredText}>
             {MESSAGES[load.status]}
           </ThemedText>
-          {load.status === 'missing' ? null : <Button title="Retry" onPress={retry} />}
+          {load.status === 'missing' ? null : (
+            <Button title="Retry" onPress={retry} variant="secondary" />
+          )}
         </View>
       </ThemedView>
     );
@@ -218,7 +220,13 @@ function ZoneForm({ zone, onMissing }: { zone: Zone; onMissing: () => void }) {
             </ThemedText>
           ) : null}
 
-          <Button title="Delete zone" onPress={handleDelete} loading={deleting} disabled={saving} />
+          <Button
+            title="Delete zone"
+            onPress={handleDelete}
+            loading={deleting}
+            disabled={saving}
+            variant="secondary"
+          />
         </View>
       </ScrollView>
     </ThemedView>

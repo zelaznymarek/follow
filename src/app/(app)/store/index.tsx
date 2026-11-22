@@ -3,10 +3,11 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
+import { Card } from '@/components/card';
 import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, MaxContentWidth, Opacity, Spacing } from '@/constants/theme';
 import { useStore } from '@/hooks/use-store';
 import { useTheme } from '@/hooks/use-theme';
 import {
@@ -84,7 +85,7 @@ export default function StoreScreen() {
             style={styles.centeredText}>
             {MESSAGES[state]}
           </ThemedText>
-          <Button title="Retry" onPress={handleRetry} />
+          <Button title="Retry" onPress={handleRetry} variant="secondary" />
         </View>
       </ThemedView>
     );
@@ -105,7 +106,7 @@ export default function StoreScreen() {
               <ThemedText accessibilityRole="alert" accessibilityLiveRegion="polite">
                 {MESSAGES[state]}
               </ThemedText>
-              <Button title="Retry" onPress={handleRetry} />
+              <Button title="Retry" onPress={handleRetry} variant="secondary" />
             </View>
           ) : null}
           {state === 'loading' ? (
@@ -287,7 +288,7 @@ function ZoneRow({
   onMove: (zone: Zone, direction: MoveDirection) => void;
 }) {
   return (
-    <ThemedView type="backgroundElement" style={styles.row}>
+    <Card style={styles.row}>
       <Link href={{ pathname: '/store/zones/[id]', params: { id: zone.id } }} asChild>
         <Pressable style={({ pressed }) => [styles.rowName, pressed && styles.pressed]}>
           <ThemedText type="smallBold">{zone.name}</ThemedText>
@@ -298,14 +299,16 @@ function ZoneRow({
         accessibilityLabel={`Move ${zone.name} up`}
         onPress={() => onMove(zone, 'up')}
         disabled={moving || !canMoveUp}
+        variant="secondary"
       />
       <Button
         title="↓"
         accessibilityLabel={`Move ${zone.name} down`}
         onPress={() => onMove(zone, 'down')}
         disabled={moving || !canMoveDown}
+        variant="secondary"
       />
-    </ThemedView>
+    </Card>
   );
 }
 
@@ -398,7 +401,7 @@ function AddZoneForm({
         </ThemedText>
       ) : null}
       <Button title="Add" onPress={handleAdd} loading={submitting} />
-      <Button title="Cancel" onPress={handleCancel} disabled={submitting} />
+      <Button title="Cancel" onPress={handleCancel} disabled={submitting} variant="secondary" />
     </View>
   );
 }
@@ -444,10 +447,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
-    paddingLeft: Spacing.three,
     paddingRight: Spacing.two,
     paddingVertical: Spacing.two,
-    borderRadius: Spacing.three,
   },
   rowName: {
     flex: 1,
@@ -459,6 +460,6 @@ const styles = StyleSheet.create({
     marginTop: Spacing.three,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: Opacity.pressed,
   },
 });

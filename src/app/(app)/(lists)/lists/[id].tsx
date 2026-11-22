@@ -106,7 +106,9 @@ export default function ListScreen() {
             style={styles.centeredText}>
             {MESSAGES[load.status]}
           </ThemedText>
-          {load.status === 'missing' ? null : <Button title="Retry" onPress={retry} />}
+          {load.status === 'missing' ? null : (
+            <Button title="Retry" onPress={retry} variant="secondary" />
+          )}
         </View>
       </ThemedView>
     );
@@ -129,7 +131,12 @@ export default function ListScreen() {
             </ThemedText>
           ) : null}
 
-          <Button title="Delete list" onPress={handleDelete} loading={deleting} />
+          <Button
+            title="Delete list"
+            onPress={handleDelete}
+            loading={deleting}
+            variant="secondary"
+          />
         </View>
       </ScrollView>
     </ThemedView>

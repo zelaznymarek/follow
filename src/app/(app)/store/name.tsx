@@ -68,7 +68,7 @@ export default function StoreNameScreen() {
               style={styles.centeredText}>
               {MESSAGES[state]}
             </ThemedText>
-            <Button title="Retry" onPress={reload} />
+            <Button title="Retry" onPress={reload} variant="secondary" />
           </View>
         </ThemedView>
       );
@@ -133,7 +133,7 @@ function RenameStoreForm({
               <ThemedText accessibilityRole="alert" accessibilityLiveRegion="polite">
                 {MESSAGES[state]}
               </ThemedText>
-              <Button title="Retry" onPress={onRetry} />
+              <Button title="Retry" onPress={onRetry} variant="secondary" />
             </View>
           ) : null}
           {state === 'loading' ? (
