@@ -217,6 +217,7 @@ Phases 1–3, roadmap F-01 `first-android-deploy`, on branch `chore/first-androi
 | Assets | 3 new (Store tab icon) uploaded, 36 reused |
 | Checked before publishing (2026-11-21) | Phase 3 manual checks on the web dev server and the emulator: name the store, add, reorder, rename and delete zones, duplicate name refused, reload keeps the order; a new list gets `store_id` while an older list keeps `null`; a second account sees no store |
 | Devices verified (2026-11-21) | Pixel 5 over OTA: Store tab with icon, name the store, add, reorder, rename and delete zones, order kept after reopening the app, light and dark mode; airplane mode shows the offline message on the Store tab, Retry loads after reconnecting, Lists unchanged. Emulator: store, zones and order match the Pixel 5 for the same account |
+| Review-fix OTA (2026-11-21) | branch `preview`, group `fdea34a0-1c0a-420d-a0f3-34ecd7f33f59`, message "S-03 full review fixes", android only, runtime `7c659def…`, commit `07f2af5`: a duplicate zone name reloads the zones, and renaming a zone deleted elsewhere says it no longer exists; launched on the Pixel 5 — 1 launch, 0 crashes (`eas update:view <group> --insights`) |
 
 #### Follow-ups
 
