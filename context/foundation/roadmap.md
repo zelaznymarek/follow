@@ -3,7 +3,7 @@ project: Follow
 version: 1
 status: draft                    # draft | active | locked
 created: 2026-11-15
-updated: 2026-11-21
+updated: 2026-11-22
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -46,7 +46,7 @@ A household shopper arrives at the store with a list written in arbitrary order,
 | S-01 | account-sign-in        | register, sign in and stay signed in                                                 | F-01          | FR-001                                                     | done        |
 | S-02 | shopping-lists         | create, see, keep several, reopen and delete lists                                   | S-01          | FR-002, FR-003, FR-004, FR-005, FR-021                     | done        |
 | S-03 | store-and-zones        | name the store, define its zones and reorder them                                    | S-01          | FR-006, FR-007, FR-008                                     | done        |
-| S-04 | add-product-with-zone  | add a product to a list, giving it a zone the first time; remove a product           | S-02, S-03    | US-02, FR-010, FR-011, FR-012, FR-013, FR-020, FR-024      | proposed |
+| S-04 | add-product-with-zone  | add a product to a list, giving it a zone the first time; remove a product           | S-02, S-03    | US-02, FR-010, FR-011, FR-012, FR-013, FR-020, FR-024      | planning |
 | S-05 | offline-marking        | swipe to mark bought/unavailable, undo, and keep marking with no connection          | S-04          | US-03, FR-018, FR-019, FR-023, FR-026, NFR: offline        | proposed |
 | S-06 | route-ordered-list     | see the list grouped under zone headings in route order, fast                        | S-04          | US-01, FR-015, NFR: list opens < 1 s                       | proposed |
 | S-07 | product-memory-search  | find a remembered product by part of its name; change a product's zone               | S-04          | FR-014, FR-022                                             | proposed |
@@ -153,7 +153,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The only way items get onto a list, so every later slice waits on it; it also carries the product's main friction — a mandatory zone on first use works against "adding takes seconds" (Open Roadmap Question 4).
-- **Status:** proposed
+- **Status:** planning
 
 ### S-05: Mark items in the store, even offline
 
